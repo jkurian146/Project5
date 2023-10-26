@@ -31,15 +31,66 @@ public class ReversiHexModel implements ReversiModel {
     this.numColumns = numColumns;
     this.type = type;
     this.gameBoard = new Tile[numRows][numColumns];
+    initBoard();
+    System.out.println("hello");
   }
+  // 11 x 7
+  // nnn______nn   6
+  // nn________n  8
+  // n_________n  10
+  // ___________ 11
+  // n_________n  10
+  // nn________n 8
+  // nnn______nn 6
+
+  //
+  // nn_nn
+  // n___n
+  // _____
+  // n___n
+  // nn_nn
+
+  // nn___nn 3
+  // n_____n 5
+  // _______ 7
+  // n_____n 5
+  // nn___nn
+  private void initBoard() {
+    StringBuilder sb1 = new StringBuilder();
+    int middle = this.gameBoard[0].length / 2;
+    for (int i = 0; i < this.gameBoard.length; i++) {
+      int spotsOpen = Math.abs(middle - i);
+      sb1.append("\n");
+      for (int j = 0; j < this.gameBoard[i].length; j++) {
+        if (j < this.gameBoard.length - spotsOpen) {
+          this.gameBoard[i][j] = Tile.HEXTILE;
+          sb1.append("*");
+        }else {
+          sb1.append(" ");
+        }
+      }
+      }
+    System.out.println(sb1.toString());
+    }
+
   @Override
   public void makeMove(int r, int q) {
 
   }
 
   @Override
-  public PlayerTurn isGameOver() {
-    return this.pt;
+  public Boolean isGameOver() {
+    return false;
+  }
+
+  @Override
+  public PlayerTurn latestTurn() {
+    return null;
+  }
+
+  @Override
+  public int getPlayerScore(PlayerTurn player) {
+    return 0;
   }
 
   @Override
@@ -52,10 +103,7 @@ public class ReversiHexModel implements ReversiModel {
     return false;
   }
 
-  @Override
-  public int getScore() {
-    return 0;
-  }
+
 
   @Override
   public void toggleEnum() {
