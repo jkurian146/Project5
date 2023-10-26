@@ -1,6 +1,7 @@
 package model;
 
 import player.PlayerTurn;
+import tiles.ITile;
 import tiles.Tile;
 
 /**
@@ -41,11 +42,10 @@ public interface ReversiModel {
    * @param numRows    the number of rows to play with
    * @param numColumns the number of columns to play with
    * @param type       the type of tile
-   * @throws IllegalArgumentException If the given number of rows or columns are even,
-   *                                  or severely disproportionate to each other
+   * @throws IllegalArgumentException If the given number of rows or columns are even
    * @throws IllegalStateException    if the game has already started
    */
-  void startGame(int numRows, int numColumns, Tile type);
+  void startGame(int numRows, int numColumns);
 
   /**
    * Makes a move on the Reversi board by placing a tile on the specified tile.
@@ -77,7 +77,7 @@ public interface ReversiModel {
    * @return the last player to make a move
    * @throws IllegalStateException if the game hasn't been started yet
    */
-  PlayerTurn latestTurn();
+  PlayerTurn currentTurn();
 
   /**
    * Returns the score of the given player.
@@ -97,7 +97,7 @@ public interface ReversiModel {
    * @throws IllegalStateException    if the game hasn't been started yet
    * @throws IllegalArgumentException if the coordinates are invalid
    */
-  Tile getTileAt(int row, int column);
+  ITile getTileAt(int row, int column);
 
   /**
    * Returns whether the tile at the specified coordinates is flipped or not.

@@ -7,11 +7,11 @@ public class ReversiPlayerTests {
   @Test
   public void testSomething1() {
     ReversiHexModel rihm = new ReversiHexModel();
-    rihm.startGame(7,7, Tile.HEXTILE);
+    rihm.startGame(7,7);
   }
   @Test
   public void testSomething2() {
     ReversiHexModel rihm = new ReversiHexModel();
-    rihm.startGame(11,11, Tile.HEXTILE);
+    rihm.startGame(7,11);
   }
 }
