@@ -1,7 +1,7 @@
 package controller;
 
 import model.ReversiModel;
-import tiles.Tile;
+import discs.ReversiDisc;
 
 /**
  * The `ReversiController` interface defines the controller component in a Reversi game.
@@ -10,5 +10,5 @@ import tiles.Tile;
  */
 public interface ReversiController {
 
-  void playGame(ReversiModel model, int numRows, int numColumns, Tile type);
+  void playGame(ReversiModel model, int numRows, int numColumns);
 }

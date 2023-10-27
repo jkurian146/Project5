@@ -1,17 +1,16 @@
 import org.junit.Test;
 
 import model.ReversiHexModel;
-import tiles.Tile;
 
 public class ReversiPlayerTests {
   @Test
   public void testSomething1() {
     ReversiHexModel rihm = new ReversiHexModel();
-    rihm.startGame(7,7);
+    rihm.startGame(7);
   }
   @Test
   public void testSomething2() {
     ReversiHexModel rihm = new ReversiHexModel();
-    rihm.startGame(7,11);
+    rihm.startGame(11);
   }
 }

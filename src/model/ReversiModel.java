@@ -1,8 +1,7 @@
 package model;
 
 import player.PlayerTurn;
-import tiles.ITile;
-import tiles.Tile;
+import discs.Disc;
 
 /**
  * The `ReversiGame` interface defines the model in a Reversi game.
@@ -39,23 +38,21 @@ public interface ReversiModel {
   /**
    * Starts a new game of Reversi.
    *
-   * @param numRows    the number of rows to play with
-   * @param numColumns the number of columns to play with
-   * @param type       the type of tile
+   * @param boardSize    the square nxn dimension to create the board with
    * @throws IllegalArgumentException If the given number of rows or columns are even
    * @throws IllegalStateException    if the game has already started
    */
-  void startGame(int numRows, int numColumns);
+  void startGame(int boardSize);
 
   /**
-   * Makes a move on the Reversi board by placing a tile on the specified tile.
-   * This method will place the current player's tile on the given row and column.
+   * Makes a move on the Reversi board by placing a disc on the specified disc.
+   * This method will place the current player's disc on the given row and column.
    * If the move is successful, it will flip any of the opponent's discs that are surrounded
-   * in straight lines (horizontally, vertically, or diagonally) between the newly placed tile
-   * and another tile of the current player.
+   * in straight lines (horizontally, vertically, or diagonally) between the newly placed disc
+   * and another disc of the current player.
    *
-   * @param row    row of the desired tile (0-indexed from the top)
-   * @param column column of the desired tile (0-indexed from the left)
+   * @param row    row of the desired disc (0-indexed from the top)
+   * @param column column of the desired disc (0-indexed from the left)
    * @throws IllegalArgumentException If the attempted move is invalid
    * @throws IllegalStateException    if the game hasn't been started yet
    */
@@ -63,8 +60,8 @@ public interface ReversiModel {
 
   /**
    * Signal if the game is over or not. A game is over if one of the players does not
-   * occupy any tiles, or if both players have no legal moves available,
-   * or if all tiles on the board are occupied.
+   * occupy any discs, or if both players have no legal moves available,
+   * or if all discs on the board are occupied.
    *
    * @return true if game is over, false otherwise
    * @throws IllegalStateException if the game hasn't been started yet
@@ -83,32 +80,32 @@ public interface ReversiModel {
    * Returns the score of the given player.
    *
    * @param player the player to evaluate
-   * @return the number of tiles that the given player occupies
+   * @return the number of discs that the given player occupies
    * @throws IllegalStateException if the game hasn't been started yet
    */
   int getPlayerScore(PlayerTurn player);
 
   /**
-   * Returns the tile at the specified coordinates.
+   * Returns the disc at the specified coordinates.
    *
-   * @param row    row of the desired tile (0-indexed from the top)
-   * @param column column of the desired tile (0-indexed from the left)
-   * @return the desired tile
+   * @param row    row of the desired disc (0-indexed from the top)
+   * @param column column of the desired disc (0-indexed from the left)
+   * @return the desired disc
    * @throws IllegalStateException    if the game hasn't been started yet
    * @throws IllegalArgumentException if the coordinates are invalid
    */
-  ITile getTileAt(int row, int column);
+  Disc getDiscAt(int row, int column);
 
   /**
-   * Returns whether the tile at the specified coordinates is flipped or not.
+   * Returns whether the disc at the specified coordinates is flipped or not.
    *
-   * @param row    row of the desired tile (0-indexed from the top)
-   * @param column column of the desired tile (0-indexed from the left)
-   * @return whether the tile at the given position is flipped or not
+   * @param row    row of the desired disc (0-indexed from the top)
+   * @param column column of the desired disc (0-indexed from the left)
+   * @return whether the disc at the given position is flipped or not
    * @throws IllegalStateException    if the game hasn't been started yet
    * @throws IllegalArgumentException if the coordinates are invalid
    */
-  boolean isTileFlipped(int row, int column);
+  boolean isDiscFlipped(int row, int column);
 
   /**
    * Toggles between player turns
