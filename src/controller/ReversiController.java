@@ -1,7 +1,6 @@
 package controller;
 
 import model.ReversiModel;
-import discs.ReversiDisc;
 
 /**
  * The `ReversiController` interface defines the controller component in a Reversi game.

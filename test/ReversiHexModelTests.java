@@ -3,9 +3,6 @@ import model.ReversiHexModel;
 
 public class ReversiHexModelTests {
 
-
-
-
   @Test
   public void testSomething1() {
     ReversiHexModel rihm = new ReversiHexModel();
