@@ -2,6 +2,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import discs.Disc;
 import discs.DiscColor;
 import model.Posn;
 import model.ReversiHexModel;
@@ -175,30 +176,14 @@ public class ReversiHexModelTests {
     Assert.assertThrows(NullPointerException.class,
             () -> model.isDiscFlipped(new Posn(6, 6)));
 
-
-    Assert.assertThrows(NullPointerException.class,
-            () -> model.isDiscFlipped(new Posn(7, 0)));
-    Assert.assertThrows(NullPointerException.class,
-            () -> model.isDiscFlipped(new Posn(7, 1)));
-    Assert.assertThrows(NullPointerException.class,
-            () -> model.isDiscFlipped(new Posn(7, 2)));
-    Assert.assertThrows(NullPointerException.class,
-            () -> model.isDiscFlipped(new Posn(7, 3)));
-    Assert.assertThrows(NullPointerException.class,
-            () -> model.isDiscFlipped(new Posn(7, 4)));
-    Assert.assertThrows(NullPointerException.class,
-            () -> model.isDiscFlipped(new Posn(7, 5)));
-    Assert.assertThrows(NullPointerException.class,
-            () -> model.isDiscFlipped(new Posn(7, 6)));
-
-    // / 0 1 2 3 4 5 6 7
-    // 0 - - - - n n n n
-    // 1 - - - - - n n n
-    // 2 - - o x - - n n
-    // 3 - - x - o - - n
-    // 4 - - o x - - n n
-    // 5 - - - - - n n n
-    // 6 - - - - n n n n
+    // / 0 1 2 3 4 5 6
+    // 0 - - - - n n n
+    // 1 - - - - - n n
+    // 2 - - x o - - n
+    // 3 - - o - x - -
+    // 4 - - x o - - n
+    // 5 - - - - - n n
+    // 6 - - - - n n n
 
   }
 }
