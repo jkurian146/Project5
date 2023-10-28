@@ -7,7 +7,7 @@ import discs.Disc;
  * The `ReversiGame` interface defines the model in a Reversi game.
  * The model is responsible for managing the game state, enforcing game rules, and providing
  * game-related information to other components.
-
+ * <p>
  * Reversi is a two-player board game played on a hexagonal grid where each player
  * aims to have their discs outnumber their opponent's discs by the end of the game.
  * <p>
@@ -38,8 +38,8 @@ public interface ReversiModel {
   /**
    * Starts a new game of Reversi.
    *
-   * @param boardSize    the square nxn dimension to create the board with
-   * @throws IllegalArgumentException If the given number of rows or columns are even
+   * @param boardSize the square nxn dimension to create the board with
+   * @throws IllegalArgumentException If the given board size dimension is invalid
    * @throws IllegalStateException    if the game has already started
    */
   void startGame(int boardSize);
@@ -51,12 +51,11 @@ public interface ReversiModel {
    * in straight lines (horizontally, vertically, or diagonally) between the newly placed disc
    * and another disc of the current player.
    *
-   * @param row    row of the desired disc (0-indexed from the top)
-   * @param column column of the desired disc (0-indexed from the left)
-   * @throws IllegalArgumentException If the attempted move is invalid
+   * @param posn the coordinate of the desired disc to make a move to
+   * @throws IllegalArgumentException If the attempted move is not allowable
    * @throws IllegalStateException    if the game hasn't been started yet
    */
-  void makeMove(int row, int column);
+  void makeMove(Posn posn);
 
   /**
    * Signal if the game is over or not. A game is over if one of the players does not
@@ -88,30 +87,36 @@ public interface ReversiModel {
   /**
    * Returns the disc at the specified coordinates.
    *
-   * @param row    row of the desired disc (0-indexed from the top)
-   * @param column column of the desired disc (0-indexed from the left)
+   * @param posn the coordinate of the desired disc on the game board
    * @return the desired disc
-   * @throws IllegalStateException    if the game hasn't been started yet
-   * @throws IllegalArgumentException if the coordinates are invalid
+   * @throws IllegalStateException    if the game hasn't started yet
+   * @throws IllegalArgumentException if the Posn is invalid
    */
-  Disc getDiscAt(int row, int column);
+  Disc getDiscAt(Posn posn);
 
   /**
    * Returns whether the disc at the specified coordinates is flipped or not.
    *
-   * @param row    row of the desired disc (0-indexed from the top)
-   * @param column column of the desired disc (0-indexed from the left)
-   * @return whether the disc at the given position is flipped or not
+   * @param posn the coordinate of the desired disc on the game board
+   * @return true if the disc at the given position is flipped, false if not.
+   *         A faced down disc is not flipped
    * @throws IllegalStateException    if the game hasn't been started yet
    * @throws IllegalArgumentException if the coordinates are invalid
    */
-  boolean isDiscFlipped(int row, int column);
+  boolean isDiscFlipped(Posn posn);
+
+  /**
+   * Gives up the current player's turn by toggling between playerTurns.
+   *
+   * @throws IllegalStateException if the game hasn't started yet
+   */
+  void pass();
 
   /**
    * Toggles between player turns
    *
-   * @throws IllegalStateException if the game hasn't been started yet
+   * @throws IllegalStateException if the game hasn't started yet
    */
-  public void toggleEnum();
+  public void togglePlayer();
 
 }

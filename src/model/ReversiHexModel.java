@@ -1,6 +1,8 @@
 package model;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import discs.DiscType;
@@ -64,19 +66,13 @@ public class ReversiHexModel implements ReversiModel {
    * Checks that the given inputs to start a hexagonal reversi are valid. Throws an Exception if
    * given inputs result in an invalid start-game state, otherwise does nothing.
    *
-   * @param numRows    Number of rows to start the game with
-   * @param numColumns Number of columns to start the game with
+   * @param boardSize  the square dimension nxn to create the game board with
    */
-  private void checkStartGameConditions(int numRows, int numColumns) {
+  private void checkStartGameConditions(int boardSize) {
     if (this.gameOn) {
       throw new IllegalStateException("Game has already started");
-    }
-    if ((numRows == 3 && numColumns == 3)
-            || numRows < 3
-            || numColumns < 3
-            || numRows % 2 == 0
-            || numColumns % 2 == 0) {
-      throw new IllegalArgumentException("Board is too small.");
+    } else if (boardSize <= 3 || boardSize % 2 == 0) {
+      throw new IllegalArgumentException("Invalid Board Sizes");
     }
   }
 
@@ -84,7 +80,7 @@ public class ReversiHexModel implements ReversiModel {
   public void startGame(int boardSize) {
     this.numRows = boardSize;
     this.numColumns = boardSize;
-    checkStartGameConditions(this.numRows, this.numColumns);
+    checkStartGameConditions(boardSize);
 
     this.gameOn = true;
     this.gameBoard = new Disc[numRows][numColumns];
@@ -107,22 +103,186 @@ public class ReversiHexModel implements ReversiModel {
    * Helper method to check if the given coordinate inputs are valid.
    * Does nothing if coordinates are valid, throws an exception if invalid.
    *
-   * @param row    the row of the desired disc
-   * @param column the column of the desired disc
+   * @param posn the coordinate to be evaluated
    * @throws IllegalArgumentException if given coordinates are negative, out of bounds,
    *                                  or if the desired disc is null
    */
-  private void checkValidCoordinates(int row, int column) {
-    if (row < 0 || column < 0 || row >= this.gameBoard.length
-            || this.gameBoard[row][column] == null) {
-      throw new IllegalArgumentException("Invalid coordinates.");
+  private boolean checkValidCoordinates(Posn posn) {
+    int y = posn.getY();
+    int x = posn.getX();
+    return x >= 0 && y >= 0 && x < this.gameBoard.length
+            && y < this.gameBoard.length
+            && this.gameBoard[x][y] != null;
+  }
+
+  private List<Posn> moveDown(Posn posn) {
+    List<Posn> list = new ArrayList<>();
+    PlayerTurn current = this.currentTurn();
+
+    boolean moveNotFound = true;
+
+    DiscColor color = this.getPlayerColor(current);
+
+    while (checkValidCoordinates(posn) && moveNotFound) {
+      posn.set(posn.getX(), posn.getY() + 1);
+
+      if (this.getDiscAt(posn).getColor() == color) {
+        moveNotFound = false;
+      } else {
+        list.add(posn);
+      }
     }
+    return list;
+  }
+
+  private List<Posn> moveUp(Posn posn) {
+    List<Posn> list = new ArrayList<>();
+    PlayerTurn current = this.currentTurn();
+
+    boolean moveNotFound = true;
+
+    DiscColor color = this.getPlayerColor(current);
+
+    while (checkValidCoordinates(posn) && moveNotFound) {
+      posn.set(posn.getX(), posn.getY() - 1);
+
+      if (this.getDiscAt(posn).getColor() == color) {
+        moveNotFound = false;
+      } else {
+        list.add(posn);
+      }
+    }
+    return list;
+  }
+
+  private List<Posn> moveRight(Posn posn) {
+    List<Posn> list = new ArrayList<>();
+    PlayerTurn current = this.currentTurn();
+
+    boolean moveNotFound = true;
+
+    DiscColor color = this.getPlayerColor(current);
+
+    while (checkValidCoordinates(posn) && moveNotFound) {
+      posn.set(posn.getX() + 1, posn.getY());
+
+      if (this.getDiscAt(posn).getColor() == color) {
+        moveNotFound = false;
+      } else {
+        list.add(posn);
+      }
+    }
+    return list;
+  }
+
+  private List<Posn> moveLeft(Posn posn) {
+    List<Posn> list = new ArrayList<>();
+    PlayerTurn current = this.currentTurn();
+
+    boolean moveNotFound = true;
+
+    DiscColor color = this.getPlayerColor(current);
+
+    while (checkValidCoordinates(posn) && moveNotFound) {
+      posn.set(posn.getX() - 1, posn.getY());
+
+      if (this.getDiscAt(posn).getColor() == color) {
+        moveNotFound = false;
+      } else {
+        list.add(posn);
+      }
+    }
+    return list;
+  }
+
+  private List<Posn> moveLeftDown(Posn posn) {
+    List<Posn> list = new ArrayList<>();
+    PlayerTurn current = this.currentTurn();
+
+    boolean moveNotFound = true;
+
+    DiscColor color = this.getPlayerColor(current);
+
+    while (checkValidCoordinates(posn) && moveNotFound) {
+      posn.set(posn.getX() - 1, posn.getY() + 1);
+
+      if (this.getDiscAt(posn).getColor() == color) {
+        moveNotFound = false;
+      } else {
+        list.add(posn);
+      }
+    }
+    return list;
+  }
+
+  private List<Posn> moveRightDown(Posn posn) {
+    List<Posn> list = new ArrayList<>();
+    PlayerTurn current = this.currentTurn();
+
+    boolean moveNotFound = true;
+
+    DiscColor color = this.getPlayerColor(current);
+
+    while (checkValidCoordinates(posn) && moveNotFound) {
+      posn.set(posn.getX() + 1, posn.getY() + 1);
+
+      if (this.getDiscAt(posn).getColor() == color) {
+        moveNotFound = false;
+      } else {
+        list.add(posn);
+      }
+    }
+    return list;
+  }
+
+  private List<Posn> moveRightUp(Posn posn) {
+    List<Posn> list = new ArrayList<>();
+    PlayerTurn current = this.currentTurn();
+
+    boolean moveNotFound = true;
+
+    DiscColor color = this.getPlayerColor(current);
+
+    while (checkValidCoordinates(posn) && moveNotFound) {
+      posn.set(posn.getX() + 1, posn.getY() - 1);
+
+      if (this.getDiscAt(posn).getColor() == color) {
+        moveNotFound = false;
+      } else {
+        list.add(posn);
+      }
+    }
+    return list;
+  }
+
+  private List<Posn> moveLeftUp(Posn posn) {
+    List<Posn> list = new ArrayList<>();
+    PlayerTurn current = this.currentTurn();
+
+    boolean moveNotFound = true;
+
+    DiscColor color = this.getPlayerColor(current);
+
+    while (checkValidCoordinates(posn) && moveNotFound) {
+      posn.set(posn.getX() - 1, posn.getY() - 1);
+
+      if (this.getDiscAt(posn).getColor() == color) {
+        moveNotFound = false;
+      } else {
+        list.add(posn);
+      }
+    }
+    return list;
   }
 
   @Override
-  public void makeMove(int row, int column) {
+  public void makeMove(Posn posn) {
     this.gameNotYetStarted();
-    this.checkValidCoordinates(row, column);
+    this.checkValidCoordinates(posn);
+
+    if (this.getDiscAt(posn) == null) {
+      throw new IllegalArgumentException("Invalid coordinate");
+    }
 
   }
 
@@ -130,7 +290,30 @@ public class ReversiHexModel implements ReversiModel {
   public Boolean isGameOver() {
     this.gameNotYetStarted();
 
-    return false;
+    List<List<Posn>> list = new ArrayList<>();
+
+    for (int i = 0; i < this.gameBoard.length; i++) {
+      for (int j = 0; j < this.gameBoard[0].length; j++) {
+        Posn posn = new Posn(i, j);
+        DiscColor color = this.getDiscAt(posn).getColor();
+        if (color == DiscColor.FACEDOWN) {
+          list.add(this.moveDown(posn));
+          list.add(this.moveUp(posn));
+          list.add(this.moveRight(posn));
+          list.add(this.moveLeft(posn));
+          list.add(this.moveRightDown(posn));
+          list.add(this.moveLeftDown(posn));
+          list.add(this.moveRightUp(posn));
+          list.add(this.moveLeftUp(posn));
+        }
+      }
+    }
+    if (list.isEmpty()) {
+      this.gameOn = false;
+      return true;
+    } else {
+      return false;
+    }
   }
 
   @Override
@@ -167,23 +350,30 @@ public class ReversiHexModel implements ReversiModel {
   }
 
   @Override
-  public Disc getDiscAt(int row, int column) {
+  public Disc getDiscAt(Posn posn) {
     this.gameNotYetStarted();
-    this.checkValidCoordinates(row, column);
+    this.checkValidCoordinates(posn);
 
-    return this.gameBoard[row][column];
+    return this.gameBoard[posn.getX()][posn.getY()];
   }
 
   @Override
-  public boolean isDiscFlipped(int row, int column) {
+  public boolean isDiscFlipped(Posn posn) {
     this.gameNotYetStarted();
-    this.checkValidCoordinates(row, column);
+    this.checkValidCoordinates(posn);
 
-    return this.gameBoard[row][column].getColor() != DiscColor.FACEDOWN;
+    return this.gameBoard[posn.getX()][posn.getY()].getColor() != DiscColor.FACEDOWN;
   }
 
   @Override
-  public void toggleEnum() {
+  public void pass() {
+    this.gameNotYetStarted();
+
+    this.togglePlayer();
+  }
+
+  @Override
+  public void togglePlayer() {
     this.gameNotYetStarted();
 
     if (this.pt == PlayerTurn.PLAYER1) {
