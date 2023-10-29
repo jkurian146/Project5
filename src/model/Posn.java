@@ -6,15 +6,15 @@ public class Posn {
 
   public Posn(int x, int y) {
     this.x = x;
-    this.y =y;
+    this.y = y;
   }
 
   public int getX() {
-    return this.x;
+    return this.y;
   }
 
   public int getY() {
-    return this.y;
+    return this.x;
   }
 
   public void set(int x, int y) {

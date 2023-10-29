@@ -113,10 +113,7 @@ public class ReversiHexModel implements ReversiModel {
     if (x >= this.gameBoard.length || y >= this.gameBoard.length || x < 0 || y < 0) {
       return false;
     }
-    if (this.gameBoard[x][y] == null) {
-      return false;
-    }
-    return true;
+    return this.gameBoard[x][y] != null;
   }
 
   private List<Posn> moveDown(Posn posn) {
@@ -387,7 +384,7 @@ public class ReversiHexModel implements ReversiModel {
   public boolean isDiscFlipped(Posn posn) {
     this.gameNotYetStarted();
     if (!this.checkValidCoordinates(posn)) {
-      this.checkValidCoordinates(posn);
+      throw new IllegalArgumentException("POSN provided by user is invalid");
     }
     return this.gameBoard[posn.getX()][posn.getY()].getColor() != DiscColor.FACEDOWN;
   }

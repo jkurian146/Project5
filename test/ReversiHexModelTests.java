@@ -101,7 +101,6 @@ public class ReversiHexModelTests {
     Assert.assertFalse(model.isDiscFlipped(new Posn(0, 4)));
     Assert.assertFalse(model.isDiscFlipped(new Posn(0, 5)));
     Assert.assertFalse(model.isDiscFlipped(new Posn(0, 6)));
-
     Assert.assertFalse(model.isDiscFlipped(new Posn(1, 0)));
     Assert.assertFalse(model.isDiscFlipped(new Posn(1, 1)));
     Assert.assertFalse(model.isDiscFlipped(new Posn(1, 2)));
@@ -109,72 +108,30 @@ public class ReversiHexModelTests {
     Assert.assertFalse(model.isDiscFlipped(new Posn(1, 4)));
     Assert.assertFalse(model.isDiscFlipped(new Posn(1, 5)));
     Assert.assertFalse(model.isDiscFlipped(new Posn(1, 6)));
-
     Assert.assertFalse(model.isDiscFlipped(new Posn(2, 0)));
     Assert.assertFalse(model.isDiscFlipped(new Posn(2, 1)));
+    Assert.assertFalse(model.isDiscFlipped(new Posn(2, 5)));
+    Assert.assertFalse(model.isDiscFlipped(new Posn(2, 6)));
+    Assert.assertFalse(model.isDiscFlipped(new Posn(3, 0)));
+    Assert.assertFalse(model.isDiscFlipped(new Posn(3, 1)));
+    Assert.assertFalse(model.isDiscFlipped(new Posn(2, 3)));
+    Assert.assertFalse(model.isDiscFlipped(new Posn(2, 5)));
+    Assert.assertFalse(model.isDiscFlipped(new Posn(2, 6)));
+    Assert.assertFalse(model.isDiscFlipped(new Posn(4, 1)));
+    Assert.assertFalse(model.isDiscFlipped(new Posn(4, 2)));
+    Assert.assertFalse(model.isDiscFlipped(new Posn(4, 4)));
+    Assert.assertFalse(model.isDiscFlipped(new Posn(4, 5)));
+    Assert.assertFalse(model.isDiscFlipped(new Posn(5, 2)));
+    Assert.assertFalse(model.isDiscFlipped(new Posn(5, 3)));
+    Assert.assertFalse(model.isDiscFlipped(new Posn(5, 4)));
+    Assert.assertFalse(model.isDiscFlipped(new Posn(6, 3)));
 
 //    Assert.assertTrue(model.isDiscFlipped(new Posn(2, 2)));
 //    Assert.assertTrue(model.isDiscFlipped(new Posn(2, 3)));
 //    Assert.assertTrue(model.isDiscFlipped(new Posn(2, 4)));
-
-    Assert.assertFalse(model.isDiscFlipped(new Posn(2, 5)));
-    Assert.assertFalse(model.isDiscFlipped(new Posn(2, 6)));
-
-    Assert.assertFalse(model.isDiscFlipped(new Posn(3, 0)));
-    Assert.assertFalse(model.isDiscFlipped(new Posn(3, 1)));
-
-//    Assert.assertTrue(model.isDiscFlipped(new Posn(2, 2)));
-
-    Assert.assertFalse(model.isDiscFlipped(new Posn(2, 3)));
-
 //    Assert.assertTrue(model.isDiscFlipped(new Posn(2, 4)));
-
-    Assert.assertFalse(model.isDiscFlipped(new Posn(2, 5)));
-    Assert.assertFalse(model.isDiscFlipped(new Posn(2, 6)));
-
-    Assert.assertThrows(NullPointerException.class,
-            () -> model.isDiscFlipped(new Posn(4, 0)));
-    Assert.assertFalse(model.isDiscFlipped(new Posn(4, 1)));
-    Assert.assertFalse(model.isDiscFlipped(new Posn(4, 2)));
-
+//    Assert.assertTrue(model.isDiscFlipped(new Posn(2, 2)));
 //    Assert.assertTrue(model.isDiscFlipped(new Posn(4, 3)));
-
-    Assert.assertFalse(model.isDiscFlipped(new Posn(4, 4)));
-    Assert.assertFalse(model.isDiscFlipped(new Posn(4, 5)));
-
-    Assert.assertThrows(NullPointerException.class,
-            () -> model.isDiscFlipped(new Posn(4, 6)));
-
-    Assert.assertThrows(NullPointerException.class,
-            () -> model.isDiscFlipped(new Posn(5, 0)));
-    Assert.assertThrows(NullPointerException.class,
-            () -> model.isDiscFlipped(new Posn(5, 1)));
-
-    Assert.assertFalse(model.isDiscFlipped(new Posn(5, 2)));
-    Assert.assertFalse(model.isDiscFlipped(new Posn(5, 3)));
-    Assert.assertFalse(model.isDiscFlipped(new Posn(5, 4)));
-
-    Assert.assertThrows(NullPointerException.class,
-            () -> model.isDiscFlipped(new Posn(5, 5)));
-    Assert.assertThrows(NullPointerException.class,
-            () -> model.isDiscFlipped(new Posn(5, 6)));
-
-    Assert.assertThrows(NullPointerException.class,
-            () -> model.isDiscFlipped(new Posn(6, 0)));
-    Assert.assertThrows(NullPointerException.class,
-            () -> model.isDiscFlipped(new Posn(6, 1)));
-    Assert.assertThrows(NullPointerException.class,
-            () -> model.isDiscFlipped(new Posn(6, 2)));
-
-    Assert.assertFalse(model.isDiscFlipped(new Posn(6, 3)));
-
-    Assert.assertThrows(NullPointerException.class,
-            () -> model.isDiscFlipped(new Posn(6, 4)));
-    Assert.assertThrows(NullPointerException.class,
-            () -> model.isDiscFlipped(new Posn(6, 5)));
-    Assert.assertThrows(NullPointerException.class,
-            () -> model.isDiscFlipped(new Posn(6, 6)));
-
 
     // / 0 1 2 3 4 5 6 7
     // 0 - - - - n n n n
@@ -185,13 +142,39 @@ public class ReversiHexModelTests {
     // 5 - - - - - n n n
     // 6 - - - - n n n n
 
+
+    Assert.assertThrows(IllegalArgumentException.class,
+            () -> model.isDiscFlipped(new Posn(4, 0)));
+    Assert.assertThrows(IllegalArgumentException.class,
+            () -> model.isDiscFlipped(new Posn(4, 6)));
+    Assert.assertThrows(IllegalArgumentException.class,
+            () -> model.isDiscFlipped(new Posn(5, 0)));
+    Assert.assertThrows(IllegalArgumentException.class,
+            () -> model.isDiscFlipped(new Posn(5, 1)));
+    Assert.assertThrows(IllegalArgumentException.class,
+            () -> model.isDiscFlipped(new Posn(5, 5)));
+    Assert.assertThrows(IllegalArgumentException.class,
+            () -> model.isDiscFlipped(new Posn(5, 6)));
+    Assert.assertThrows(IllegalArgumentException.class,
+            () -> model.isDiscFlipped(new Posn(6, 0)));
+    Assert.assertThrows(IllegalArgumentException.class,
+            () -> model.isDiscFlipped(new Posn(6, 1)));
+    Assert.assertThrows(IllegalArgumentException.class,
+            () -> model.isDiscFlipped(new Posn(6, 2)));
+    Assert.assertThrows(IllegalArgumentException.class,
+            () -> model.isDiscFlipped(new Posn(6, 4)));
+    Assert.assertThrows(IllegalArgumentException.class,
+            () -> model.isDiscFlipped(new Posn(6, 5)));
+    Assert.assertThrows(IllegalArgumentException.class,
+            () -> model.isDiscFlipped(new Posn(6, 6)));
+
   }
 
   @Test
   public void testHelperWorking() {
     model.startGame(7);
     Posn invalid = new Posn(4,0);
-    model.getDiscAt(invalid);
-    model.isDiscFlipped(invalid);
+    Assert.assertThrows(IllegalArgumentException.class, () -> model.getDiscAt(invalid));
+    Assert.assertThrows(IllegalArgumentException.class, () -> model.isDiscFlipped(invalid));
   }
 }
