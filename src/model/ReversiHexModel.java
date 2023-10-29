@@ -108,11 +108,15 @@ public class ReversiHexModel implements ReversiModel {
    *                                  or if the desired disc is null
    */
   private boolean checkValidCoordinates(Posn posn) {
-    int y = posn.getY();
     int x = posn.getX();
-    return x >= 0 && y >= 0 && x < this.gameBoard.length
-            && y < this.gameBoard.length
-            && this.gameBoard[y][x] != null;
+    int y = posn.getY();
+    if (x >= this.gameBoard.length || y >= this.gameBoard.length || x < 0 || y < 0) {
+      return false;
+    }
+    if (this.gameBoard[x][y] == null) {
+      return false;
+    }
+    return true;
   }
 
   private List<Posn> moveDown(Posn posn) {
@@ -373,30 +377,30 @@ public class ReversiHexModel implements ReversiModel {
   @Override
   public Disc getDiscAt(Posn posn) {
     this.gameNotYetStarted();
-    this.checkValidCoordinates(posn);
-
-    return this.gameBoard[posn.getY()][posn.getX()];
+    if (!this.checkValidCoordinates(posn)) {
+      throw new IllegalArgumentException("POSN provided by user is invalid");
+    }
+    return this.gameBoard[posn.getX()][posn.getY()];
   }
 
   @Override
   public boolean isDiscFlipped(Posn posn) {
     this.gameNotYetStarted();
-    this.checkValidCoordinates(posn);
-
-    return this.gameBoard[posn.getY()][posn.getX()].getColor() != DiscColor.FACEDOWN;
+    if (!this.checkValidCoordinates(posn)) {
+      this.checkValidCoordinates(posn);
+    }
+    return this.gameBoard[posn.getX()][posn.getY()].getColor() != DiscColor.FACEDOWN;
   }
 
   @Override
   public void pass() {
     this.gameNotYetStarted();
-
     this.togglePlayer();
   }
 
   @Override
   public void togglePlayer() {
     this.gameNotYetStarted();
-
     if (this.pt == PlayerTurn.PLAYER1) {
       this.pt = PlayerTurn.PLAYER2;
     } else {
