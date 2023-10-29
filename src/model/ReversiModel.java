@@ -112,11 +112,4 @@ public interface ReversiModel {
    */
   void pass();
 
-  /**
-   * Toggles between player turns
-   *
-   * @throws IllegalStateException if the game hasn't started yet
-   */
-  public void togglePlayer();
-
 }

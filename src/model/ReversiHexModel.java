@@ -59,7 +59,38 @@ public class ReversiHexModel implements ReversiModel {
         }
       }
     }
+    this.setStartingPieces();
     System.out.println(sb1.toString());
+  }
+
+  private void setPiece(Posn posn, DiscColor color) {
+    GameDisc replacementDisc = new GameDisc(this.type, color);
+
+    this.gameBoard[posn.getX()][ posn.getY()] = replacementDisc;
+  }
+
+  private void setStartingPieces() {
+
+
+   this.setPiece(new Posn(2, 2), DiscColor.BLACK);
+    this.setPiece(new Posn(2, 4), DiscColor.BLACK);
+    this.setPiece(new Posn(4, 3), DiscColor.BLACK);
+    this.setPiece(new Posn(3, 2), DiscColor.WHITE);
+    this.setPiece(new Posn(2, 3), DiscColor.WHITE);
+    this.setPiece(new Posn(3, 4), DiscColor.WHITE);
+
+    // / 0 1 2 3 4 5 6
+    // 0 - - - - n n n
+    // 1 - - - - - n n
+    // 2 - - o x - - n
+    // 3 - - x - o - -
+    // 4 - - o x - - n
+    // 5 - - - - - n n
+    // 6 - - - - n n n
+  }
+
+  public Disc[][] getBoard() {
+    return this.gameBoard;
   }
 
   /**
@@ -124,14 +155,21 @@ public class ReversiHexModel implements ReversiModel {
 
     DiscColor color = this.getPlayerColor(current);
 
-    while (checkValidCoordinates(posn) && moveNotFound) {
-      posn.set(posn.getX(), posn.getY() + 1);
+    int currentX = posn.getY();
+    int currentY = posn.getX();
 
-      if (this.getDiscAt(posn).getColor() == color) {
+    while (checkValidCoordinates(posn) && moveNotFound) {
+      currentY--;
+      Posn newPosn = new Posn(currentX, currentY);
+
+      if (this.getDiscAt(newPosn).getColor() == color) {
         moveNotFound = false;
       } else {
-        list.add(posn);
+        list.add(newPosn);
       }
+    }
+    if(!list.isEmpty()) {
+      list.add(posn);
     }
     return list;
   }
@@ -144,14 +182,21 @@ public class ReversiHexModel implements ReversiModel {
 
     DiscColor color = this.getPlayerColor(current);
 
-    while (checkValidCoordinates(posn) && moveNotFound) {
-      posn.set(posn.getX(), posn.getY() - 1);
+    int currentX = posn.getY();
+    int currentY = posn.getX();
 
-      if (this.getDiscAt(posn).getColor() == color) {
+    while (checkValidCoordinates(posn) && moveNotFound) {
+      currentY++;
+      Posn newPosn = new Posn(currentX, currentY);
+
+      if (this.getDiscAt(newPosn).getColor() == color) {
         moveNotFound = false;
       } else {
-        list.add(posn);
+        list.add(newPosn);
       }
+    }
+    if(!list.isEmpty()) {
+      list.add(posn);
     }
     return list;
   }
@@ -268,6 +313,7 @@ public class ReversiHexModel implements ReversiModel {
       posn.set(posn.getX() - 1, posn.getY() - 1);
 
       if (this.getDiscAt(posn).getColor() == color) {
+        list.add(posn);
         moveNotFound = false;
       } else {
         list.add(posn);
@@ -279,32 +325,48 @@ public class ReversiHexModel implements ReversiModel {
   @Override
   public void makeMove(Posn posn) {
     this.gameNotYetStarted();
+    if (!this.checkValidCoordinates(posn)) {
+      throw new IllegalArgumentException("POSN provided by user is invalid");
+    }
 
     List<List<Posn>> list = new ArrayList<>();
 
     if (this.getDiscAt(posn).getColor() != DiscColor.FACEDOWN) {
       throw new IllegalStateException("Invalid Move");
     }
+
     list.add(this.moveDown(posn));
-    list.add(this.moveUp(posn));
-    list.add(this.moveRight(posn));
-    list.add(this.moveLeft(posn));
-    list.add(this.moveRightDown(posn));
-    list.add(this.moveLeftDown(posn));
-    list.add(this.moveRightUp(posn));
-    list.add(this.moveLeftUp(posn));
+//    list.add(this.moveUp(posn));
+//    list.add(this.moveRight(posn));
+//    list.add(this.moveLeft(posn));
+//    list.add(this.moveRightDown(posn));
+//    list.add(this.moveLeftDown(posn));
+//    list.add(this.moveRightUp(posn));
+//    list.add(this.moveLeftUp(posn));
+
+    int numEmptyLists = 0;
+    for(List<Posn> l : list) {
+      if(l.isEmpty()) {
+        numEmptyLists++;
+      }
+    }
+
+    if(list.size() == numEmptyLists) {
+      throw new IllegalStateException("Invalid move");
+    }
 
     for (int i = 0; i < list.size(); i++) {
       List<Posn> currentList = list.get(i);
       applyColorFilter(currentList, this.getPlayerColor(this.pt));
     }
+    this.togglePlayer();
   }
+
   // setDisc(x,y,color)
   private void applyColorFilter(List<Posn> list, DiscColor discColor) {
-    // loop through posn's and use setDisc to the new disc color
-    for (int i = 0; i < list.size(); i++) {
-      // posn currentPosn = list.get(i)
-      // setDisc(currentPosn.getX(), list.get(i).get(y), discColor)
+
+    for (Posn posn : list) {
+      this.setPiece(posn, discColor);
     }
   }
 
@@ -395,8 +457,7 @@ public class ReversiHexModel implements ReversiModel {
     this.togglePlayer();
   }
 
-  @Override
-  public void togglePlayer() {
+  private void togglePlayer() {
     this.gameNotYetStarted();
     if (this.pt == PlayerTurn.PLAYER1) {
       this.pt = PlayerTurn.PLAYER2;
