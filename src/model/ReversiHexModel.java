@@ -72,7 +72,7 @@ public class ReversiHexModel implements ReversiModel {
   private void setStartingPieces() {
 
 
-   this.setPiece(2, 2, DiscColor.BLACK);
+    this.setPiece(2, 2, DiscColor.BLACK);
     this.setPiece(2, 4, DiscColor.BLACK);
     this.setPiece(4, 3, DiscColor.BLACK);
     this.setPiece(3, 2, DiscColor.WHITE);
@@ -155,10 +155,35 @@ public class ReversiHexModel implements ReversiModel {
     boolean currentCoordinateValid = true;
     DiscColor color = this.getPlayerColor(current);
 
-
-
     while (currentCoordinateValid && moveNotFound) {
       y--;
+      if (!this.checkValidCoordinates(x,y)) {
+        currentCoordinateValid = false;
+      }
+      if (this.getDiscAt(x,y).getColor() == color) {
+        moveNotFound = false;
+      } else {
+        List<Integer> tempList = new ArrayList<>(Arrays.asList(x,y));
+        list.add(tempList);
+      }
+    }
+    if(list.size() == 1) {
+      list.remove(0);
+    }
+    return list;
+  }
+
+  private List<List<Integer>> moveUp(int x, int y) {
+    List<Integer> firstPos = new ArrayList<>(Arrays.asList(x,y));
+    List<List<Integer>> list = new ArrayList<>();
+    list.add(firstPos);
+    PlayerTurn current = this.currentTurn();
+    boolean moveNotFound = true;
+    boolean currentCoordinateValid = true;
+    DiscColor color = this.getPlayerColor(current);
+
+    while (currentCoordinateValid && moveNotFound) {
+      y++;
       if (!this.checkValidCoordinates(x,y)) {
         currentCoordinateValid = false;
       }
@@ -195,6 +220,7 @@ public class ReversiHexModel implements ReversiModel {
 
     // Add the results of your move methods (e.g., moveDown, moveUp, etc.) to the list
     moves.add(this.moveDown(x, y));
+//    moves.add(this.moveUp(x,y));
     // Add other move methods as needed
 
     // Check if all move lists are empty
@@ -215,7 +241,7 @@ public class ReversiHexModel implements ReversiModel {
   // setDisc(x,y,color)
 
   private void applyColorFilter(List<Integer> list, DiscColor discColor) {
-      this.setPiece(list.get(0),list.get(1), discColor);
+    this.setPiece(list.get(0),list.get(1), discColor);
   }
 
   @Override
