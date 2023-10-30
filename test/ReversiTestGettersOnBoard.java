@@ -2,7 +2,6 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import discs.GameDisc;
-import model.Posn;
 import model.ReversiHexModel;
 
 public class ReversiTestGettersOnBoard {

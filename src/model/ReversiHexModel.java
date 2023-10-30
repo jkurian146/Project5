@@ -8,7 +8,6 @@ import java.util.Map;
 import discs.DiscType;
 import player.PlayerTurn;
 import discs.Disc;
-import discs.DiscType;
 import discs.DiscColor;
 import discs.GameDisc;
 
@@ -63,21 +62,21 @@ public class ReversiHexModel implements ReversiModel {
     System.out.println(sb1.toString());
   }
 
-  private void setPiece(Posn posn, DiscColor color) {
+  private void setPiece(int x, int y, DiscColor color) {
     GameDisc replacementDisc = new GameDisc(this.type, color);
 
-    this.gameBoard[posn.getX()][ posn.getY()] = replacementDisc;
+    this.gameBoard[y][x] = replacementDisc;
   }
 
   private void setStartingPieces() {
 
 
-   this.setPiece(new Posn(2, 2), DiscColor.BLACK);
-    this.setPiece(new Posn(2, 4), DiscColor.BLACK);
-    this.setPiece(new Posn(4, 3), DiscColor.BLACK);
-    this.setPiece(new Posn(3, 2), DiscColor.WHITE);
-    this.setPiece(new Posn(2, 3), DiscColor.WHITE);
-    this.setPiece(new Posn(3, 4), DiscColor.WHITE);
+   this.setPiece(2, 2, DiscColor.BLACK);
+    this.setPiece(2, 4, DiscColor.BLACK);
+    this.setPiece(4, 3, DiscColor.BLACK);
+    this.setPiece(3, 2, DiscColor.WHITE);
+    this.setPiece(2, 3, DiscColor.WHITE);
+    this.setPiece(3, 4, DiscColor.WHITE);
 
     // / 0 1 2 3 4 5 6
     // 0 - - - - n n n
@@ -138,16 +137,15 @@ public class ReversiHexModel implements ReversiModel {
    * @throws IllegalArgumentException if given coordinates are negative, out of bounds,
    *                                  or if the desired disc is null
    */
-  private boolean checkValidCoordinates(Posn posn) {
-    int x = posn.getX();
-    int y = posn.getY();
+  private boolean checkValidCoordinates(int x, int y) {
+
     if (x >= this.gameBoard.length || y >= this.gameBoard.length || x < 0 || y < 0) {
       return false;
     }
-    return this.gameBoard[x][y] != null;
+    return this.gameBoard[y][x] != null;
   }
 
-  private List<Posn> moveDown(Posn posn) {
+  private List<List<Integer>> moveDown(int x, int y) {
     List<Posn> list = new ArrayList<>();
     PlayerTurn current = this.currentTurn();
 
@@ -177,11 +175,10 @@ public class ReversiHexModel implements ReversiModel {
     return list;
   }
 
-
   @Override
-  public void makeMove(Posn posn) {
+  public void makeMove(int x, int y) {
     this.gameNotYetStarted();
-    if (!this.checkValidCoordinates(posn)) {
+    if (!this.checkValidCoordinates(x, y)) {
       throw new IllegalArgumentException("POSN provided by user is invalid");
     }
 
@@ -281,21 +278,21 @@ public class ReversiHexModel implements ReversiModel {
   }
 
   @Override
-  public Disc getDiscAt(Posn posn) {
+  public Disc getDiscAt(int x, int y) {
     this.gameNotYetStarted();
-    if (!this.checkValidCoordinates(posn)) {
+    if (!this.checkValidCoordinates(x, y)) {
       throw new IllegalArgumentException("POSN provided by user is invalid");
     }
-    return this.gameBoard[posn.getX()][posn.getY()];
+    return this.gameBoard[y][x];
   }
 
   @Override
-  public boolean isDiscFlipped(Posn posn) {
+  public boolean isDiscFlipped(int x, int y) {
     this.gameNotYetStarted();
-    if (!this.checkValidCoordinates(posn)) {
+    if (!this.checkValidCoordinates(x, y)) {
       throw new IllegalArgumentException("POSN provided by user is invalid");
     }
-    return this.gameBoard[posn.getX()][posn.getY()].getColor() != DiscColor.FACEDOWN;
+    return this.gameBoard[y][x].getColor() != DiscColor.FACEDOWN;
   }
 
   @Override

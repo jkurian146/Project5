@@ -55,7 +55,7 @@ public interface ReversiModel {
    * @throws IllegalArgumentException If the attempted move is not allowable
    * @throws IllegalStateException    if the game hasn't been started yet
    */
-  void makeMove(Posn posn);
+  void makeMove(int x, int y);
 
   /**
    * Signal if the game is over or not. A game is over if one of the players does not
@@ -92,7 +92,7 @@ public interface ReversiModel {
    * @throws IllegalStateException    if the game hasn't started yet
    * @throws IllegalArgumentException if the Posn is invalid
    */
-  Disc getDiscAt(Posn posn);
+  Disc getDiscAt(int x,  int y);
 
   /**
    * Returns whether the disc at the specified coordinates is flipped or not.
@@ -103,7 +103,7 @@ public interface ReversiModel {
    * @throws IllegalStateException    if the game hasn't been started yet
    * @throws IllegalArgumentException if the coordinates are invalid
    */
-  boolean isDiscFlipped(Posn posn);
+  boolean isDiscFlipped(int x, int y);
 
   /**
    * Gives up the current player's turn by toggling between playerTurns.
