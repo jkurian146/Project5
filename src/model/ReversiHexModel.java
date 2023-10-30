@@ -152,16 +152,19 @@ public class ReversiHexModel implements ReversiModel {
     PlayerTurn current = this.currentTurn();
 
     boolean moveNotFound = true;
-
+    boolean currentCoordinateValid = true;
     DiscColor color = this.getPlayerColor(current);
 
     int currentX = posn.getY();
     int currentY = posn.getX();
 
-    while (checkValidCoordinates(posn) && moveNotFound) {
+    while (currentCoordinateValid && moveNotFound) {
       currentY--;
       Posn newPosn = new Posn(currentX, currentY);
-
+      // user passes 2,1  in game (1,2) 1,1 1,0
+      if (!this.checkValidCoordinates(newPosn)) {
+        currentCoordinateValid = false;
+      }
       if (this.getDiscAt(newPosn).getColor() == color) {
         moveNotFound = false;
       } else {
@@ -174,153 +177,6 @@ public class ReversiHexModel implements ReversiModel {
     return list;
   }
 
-  private List<Posn> moveUp(Posn posn) {
-    List<Posn> list = new ArrayList<>();
-    PlayerTurn current = this.currentTurn();
-
-    boolean moveNotFound = true;
-
-    DiscColor color = this.getPlayerColor(current);
-
-    int currentX = posn.getY();
-    int currentY = posn.getX();
-
-    while (checkValidCoordinates(posn) && moveNotFound) {
-      currentY++;
-      Posn newPosn = new Posn(currentX, currentY);
-
-      if (this.getDiscAt(newPosn).getColor() == color) {
-        moveNotFound = false;
-      } else {
-        list.add(newPosn);
-      }
-    }
-    if(!list.isEmpty()) {
-      list.add(posn);
-    }
-    return list;
-  }
-
-  private List<Posn> moveRight(Posn posn) {
-    List<Posn> list = new ArrayList<>();
-    PlayerTurn current = this.currentTurn();
-
-    boolean moveNotFound = true;
-
-    DiscColor color = this.getPlayerColor(current);
-
-    while (checkValidCoordinates(posn) && moveNotFound) {
-      posn.set(posn.getX() + 1, posn.getY());
-
-      if (this.getDiscAt(posn).getColor() == color) {
-        moveNotFound = false;
-      } else {
-        list.add(posn);
-      }
-    }
-    return list;
-  }
-
-  private List<Posn> moveLeft(Posn posn) {
-    List<Posn> list = new ArrayList<>();
-    PlayerTurn current = this.currentTurn();
-
-    boolean moveNotFound = true;
-
-    DiscColor color = this.getPlayerColor(current);
-
-    while (checkValidCoordinates(posn) && moveNotFound) {
-      posn.set(posn.getX() - 1, posn.getY());
-
-      if (this.getDiscAt(posn).getColor() == color) {
-        moveNotFound = false;
-      } else {
-        list.add(posn);
-      }
-    }
-    return list;
-  }
-
-  private List<Posn> moveLeftDown(Posn posn) {
-    List<Posn> list = new ArrayList<>();
-    PlayerTurn current = this.currentTurn();
-
-    boolean moveNotFound = true;
-
-    DiscColor color = this.getPlayerColor(current);
-
-    while (checkValidCoordinates(posn) && moveNotFound) {
-      posn.set(posn.getX() - 1, posn.getY() + 1);
-
-      if (this.getDiscAt(posn).getColor() == color) {
-        moveNotFound = false;
-      } else {
-        list.add(posn);
-      }
-    }
-    return list;
-  }
-
-  private List<Posn> moveRightDown(Posn posn) {
-    List<Posn> list = new ArrayList<>();
-    PlayerTurn current = this.currentTurn();
-
-    boolean moveNotFound = true;
-
-    DiscColor color = this.getPlayerColor(current);
-
-    while (checkValidCoordinates(posn) && moveNotFound) {
-      posn.set(posn.getX() + 1, posn.getY() + 1);
-
-      if (this.getDiscAt(posn).getColor() == color) {
-        moveNotFound = false;
-      } else {
-        list.add(posn);
-      }
-    }
-    return list;
-  }
-
-  private List<Posn> moveRightUp(Posn posn) {
-    List<Posn> list = new ArrayList<>();
-    PlayerTurn current = this.currentTurn();
-
-    boolean moveNotFound = true;
-
-    DiscColor color = this.getPlayerColor(current);
-
-    while (checkValidCoordinates(posn) && moveNotFound) {
-      posn.set(posn.getX() + 1, posn.getY() - 1);
-
-      if (this.getDiscAt(posn).getColor() == color) {
-        moveNotFound = false;
-      } else {
-        list.add(posn);
-      }
-    }
-    return list;
-  }
-
-  private List<Posn> moveLeftUp(Posn posn) {
-    List<Posn> list = new ArrayList<>();
-    PlayerTurn current = this.currentTurn();
-
-    boolean moveNotFound = true;
-
-    DiscColor color = this.getPlayerColor(current);
-
-    while (checkValidCoordinates(posn) && moveNotFound) {
-      posn.set(posn.getX() - 1, posn.getY() - 1);
-
-      if (this.getDiscAt(posn).getColor() == color) {
-        list.add(posn);
-        moveNotFound = false;
-      } else {
-        list.add(posn);
-      }
-    }
-    return list;
-  }
 
   @Override
   public void makeMove(Posn posn) {
@@ -335,6 +191,7 @@ public class ReversiHexModel implements ReversiModel {
       throw new IllegalStateException("Invalid Move");
     }
 
+    // bfs
     list.add(this.moveDown(posn));
 //    list.add(this.moveUp(posn));
 //    list.add(this.moveRight(posn));
@@ -343,24 +200,14 @@ public class ReversiHexModel implements ReversiModel {
 //    list.add(this.moveLeftDown(posn));
 //    list.add(this.moveRightUp(posn));
 //    list.add(this.moveLeftUp(posn));
-
-    int numEmptyLists = 0;
-    for(List<Posn> l : list) {
-      if(l.isEmpty()) {
-        numEmptyLists++;
-      }
-    }
-
-    if(list.size() == numEmptyLists) {
+    boolean allemptyLists = list.stream().allMatch(List::isEmpty);
+    if (allemptyLists) {
       throw new IllegalStateException("Invalid move");
     }
-
-    for (int i = 0; i < list.size(); i++) {
-      List<Posn> currentList = list.get(i);
-      applyColorFilter(currentList, this.getPlayerColor(this.pt));
-    }
+    list.forEach(innerList -> applyColorFilter(innerList,this.getPlayerColor(this.pt)));
     this.togglePlayer();
   }
+
 
   // setDisc(x,y,color)
   private void applyColorFilter(List<Posn> list, DiscColor discColor) {
@@ -382,13 +229,13 @@ public class ReversiHexModel implements ReversiModel {
         DiscColor color = this.getDiscAt(posn).getColor();
         if (color == DiscColor.FACEDOWN) {
           list.add(this.moveDown(posn));
-          list.add(this.moveUp(posn));
-          list.add(this.moveRight(posn));
-          list.add(this.moveLeft(posn));
-          list.add(this.moveRightDown(posn));
-          list.add(this.moveLeftDown(posn));
-          list.add(this.moveRightUp(posn));
-          list.add(this.moveLeftUp(posn));
+//          list.add(this.moveUp(posn));
+//          list.add(this.moveRight(posn));
+//          list.add(this.moveLeft(posn));
+//          list.add(this.moveRightDown(posn));
+//          list.add(this.moveLeftDown(posn));
+//          list.add(this.moveRightUp(posn));
+//          list.add(this.moveLeftUp(posn));
         }
       }
     }
