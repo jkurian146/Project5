@@ -51,7 +51,7 @@ public interface ReversiModel {
    * in straight lines (horizontally, vertically, or diagonally) between the newly placed disc
    * and another disc of the current player.
    *
-   * @param posn the coordinate of the desired disc to make a move to
+   * @param x the coordinate of the desired disc to make a move to
    * @throws IllegalArgumentException If the attempted move is not allowable
    * @throws IllegalStateException    if the game hasn't been started yet
    */
@@ -87,7 +87,7 @@ public interface ReversiModel {
   /**
    * Returns the disc at the specified coordinates.
    *
-   * @param posn the coordinate of the desired disc on the game board
+   * @param x the coordinate of the desired disc on the game board
    * @return the desired disc
    * @throws IllegalStateException    if the game hasn't started yet
    * @throws IllegalArgumentException if the Posn is invalid
@@ -97,7 +97,7 @@ public interface ReversiModel {
   /**
    * Returns whether the disc at the specified coordinates is flipped or not.
    *
-   * @param posn the coordinate of the desired disc on the game board
+   * @param x the coordinate of the desired disc on the game board
    * @return true if the disc at the given position is flipped, false if not.
    *         A faced down disc is not flipped
    * @throws IllegalStateException    if the game hasn't been started yet
