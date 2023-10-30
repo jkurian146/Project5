@@ -186,7 +186,7 @@ public class ReversiHexModelTests {
     // 5 - - x - - n n n
     // 6 - - - - n n n n
     // x is white o is black
-   // result of move
+    // result of move
 
     model.pass();
 
@@ -261,29 +261,3 @@ public class ReversiHexModelTests {
   }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -1,6 +1,7 @@
 package model;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -133,7 +134,7 @@ public class ReversiHexModel implements ReversiModel {
    * Helper method to check if the given coordinate inputs are valid.
    * Does nothing if coordinates are valid, throws an exception if invalid.
    *
-   * @param posn the coordinate to be evaluated
+   * @param x,y the coordinate to be evaluated
    * @throws IllegalArgumentException if given coordinates are negative, out of bounds,
    *                                  or if the desired disc is null
    */
@@ -146,102 +147,80 @@ public class ReversiHexModel implements ReversiModel {
   }
 
   private List<List<Integer>> moveDown(int x, int y) {
-    List<Posn> list = new ArrayList<>();
+    List<Integer> firstPos = new ArrayList<>(Arrays.asList(x,y));
+    List<List<Integer>> list = new ArrayList<>();
+    list.add(firstPos);
     PlayerTurn current = this.currentTurn();
-
     boolean moveNotFound = true;
     boolean currentCoordinateValid = true;
     DiscColor color = this.getPlayerColor(current);
 
-    int currentX = posn.getY();
-    int currentY = posn.getX();
+
 
     while (currentCoordinateValid && moveNotFound) {
-      currentY--;
-      Posn newPosn = new Posn(currentX, currentY);
-      // user passes 2,1  in game (1,2) 1,1 1,0
-      if (!this.checkValidCoordinates(newPosn)) {
+      y--;
+      if (!this.checkValidCoordinates(x,y)) {
         currentCoordinateValid = false;
       }
-      if (this.getDiscAt(newPosn).getColor() == color) {
+      if (this.getDiscAt(x,y).getColor() == color) {
         moveNotFound = false;
       } else {
-        list.add(newPosn);
+        List<Integer> tempList = new ArrayList<>(Arrays.asList(x,y));
+        list.add(tempList);
       }
     }
-    if(!list.isEmpty()) {
-      list.add(posn);
+    if(list.size() == 1) {
+      list.remove(0);
     }
     return list;
   }
 
   @Override
   public void makeMove(int x, int y) {
+    // Check if the game has not yet started
     this.gameNotYetStarted();
+
+    // Check if the provided coordinates are valid
     if (!this.checkValidCoordinates(x, y)) {
-      throw new IllegalArgumentException("POSN provided by user is invalid");
+      throw new IllegalArgumentException("Invalid coordinates provided by the user.");
     }
 
-    List<List<Posn>> list = new ArrayList<>();
-
-    if (this.getDiscAt(posn).getColor() != DiscColor.FACEDOWN) {
-      throw new IllegalStateException("Invalid Move");
+    // Check if the specified position contains a facedown disc
+    if (this.getDiscAt(x, y).getColor() != DiscColor.FACEDOWN) {
+      throw new IllegalStateException("Invalid Move: Disc is not facedown.");
     }
 
-    // bfs
-    list.add(this.moveDown(posn));
-//    list.add(this.moveUp(posn));
-//    list.add(this.moveRight(posn));
-//    list.add(this.moveLeft(posn));
-//    list.add(this.moveRightDown(posn));
-//    list.add(this.moveLeftDown(posn));
-//    list.add(this.moveRightUp(posn));
-//    list.add(this.moveLeftUp(posn));
-    boolean allemptyLists = list.stream().allMatch(List::isEmpty);
-    if (allemptyLists) {
-      throw new IllegalStateException("Invalid move");
+    // Initialize a list for possible moves
+    List<List<List<Integer>>> moves = new ArrayList<>();
+
+    // Add the results of your move methods (e.g., moveDown, moveUp, etc.) to the list
+    moves.add(this.moveDown(x, y));
+    // Add other move methods as needed
+
+    // Check if all move lists are empty
+    boolean allEmptyLists = moves.stream().allMatch(List::isEmpty);
+
+    if (allEmptyLists) {
+      throw new IllegalStateException("Invalid move: No valid moves found.");
     }
-    list.forEach(innerList -> applyColorFilter(innerList,this.getPlayerColor(this.pt)));
+
+    // Apply color filter to each inner list and toggle the player
+    for (List<List<Integer>> l : moves ) {
+      l.forEach(innerList -> applyColorFilter(innerList, this.getPlayerColor(this.pt)));
+    }
     this.togglePlayer();
   }
 
 
   // setDisc(x,y,color)
-  private void applyColorFilter(List<Posn> list, DiscColor discColor) {
 
-    for (Posn posn : list) {
-      this.setPiece(posn, discColor);
-    }
+  private void applyColorFilter(List<Integer> list, DiscColor discColor) {
+      this.setPiece(list.get(0),list.get(1), discColor);
   }
 
   @Override
   public Boolean isGameOver() {
-    this.gameNotYetStarted();
-
-    List<List<Posn>> list = new ArrayList<>();
-
-    for (int i = 0; i < this.gameBoard.length; i++) {
-      for (int j = 0; j < this.gameBoard[0].length; j++) {
-        Posn posn = new Posn(i, j);
-        DiscColor color = this.getDiscAt(posn).getColor();
-        if (color == DiscColor.FACEDOWN) {
-          list.add(this.moveDown(posn));
-//          list.add(this.moveUp(posn));
-//          list.add(this.moveRight(posn));
-//          list.add(this.moveLeft(posn));
-//          list.add(this.moveRightDown(posn));
-//          list.add(this.moveLeftDown(posn));
-//          list.add(this.moveRightUp(posn));
-//          list.add(this.moveLeftUp(posn));
-        }
-      }
-    }
-    if (list.isEmpty()) {
-      this.gameOn = false;
-      return true;
-    } else {
-      return false;
-    }
+    return false;
   }
 
   @Override
