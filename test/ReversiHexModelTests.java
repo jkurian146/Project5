@@ -226,39 +226,39 @@ public class ReversiHexModelTests {
   }
 
 
-//  @Test
-//  public void moveUp() {
-//    model.startGame(7);
-//
-//    // / 0 1 2 3 4 5 6 7
-//    // 0 - - - - n n n n
-//    // 1 - - - - - n n n
-//    // 2 - - o x - - n n
-//    // 3 - - x - o - - n
-//    // 4 - - o x - - n n
-//    // 5 - - - - - n n n
-//    // 6 - - - - n n n n
-//    // x is white o is black
-//    // move up
-//    // 2,1, 2,2 2,3 end  (1,2 2,2 3,2)
-//    // move down
-//    // 2,1 2,0 end (1,2 0,2)
-//    // move down means that we are picking a coordinate and
-//    model.pass();
-//    model.makeMove(2, 1);
-//    Assert.assertEquals(DiscColor.WHITE, model.getDiscAt(2, 1).getColor());
-//    Assert.assertEquals(DiscColor.WHITE, model.getDiscAt(2, 2).getColor());
-//
-//    // / 0 1 2 3 4 5 6 7
-//    // 0 - - - - n n n n
-//    // 1 - - x - - n n n
-//    // 2 - - x x - - n n
-//    // 3 - - x - o - - n
-//    // 4 - - o x - - n n
-//    // 5 - - - - - n n n
-//    // 6 - - - - n n n n
-//
-//  }
+  @Test
+  public void moveUp() {
+    model.startGame(7);
+
+    // / 0 1 2 3 4 5 6 7
+    // 0 - - - - n n n n
+    // 1 - - - - - n n n
+    // 2 - - o x - - n n
+    // 3 - - x - o - - n
+    // 4 - - o x - - n n
+    // 5 - - - - - n n n
+    // 6 - - - - n n n n
+    // x is white o is black
+    // move up
+    // 2,1, 2,2 2,3 end  (1,2 2,2 3,2)
+    // move down
+    // 2,1 2,0 end (1,2 0,2)
+    // move down means that we are picking a coordinate and
+    model.pass();
+    model.makeMove(2, 1);
+    Assert.assertEquals(DiscColor.WHITE, model.getDiscAt(2, 1).getColor());
+    Assert.assertEquals(DiscColor.WHITE, model.getDiscAt(2, 2).getColor());
+
+    // / 0 1 2 3 4 5 6 7
+    // 0 - - - - n n n n
+    // 1 - - x - - n n n
+    // 2 - - x x - - n n
+    // 3 - - x - o - - n
+    // 4 - - o x - - n n
+    // 5 - - - - - n n n
+    // 6 - - - - n n n n
+
+  }
 
 }
 

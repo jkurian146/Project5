@@ -155,7 +155,7 @@ public class ReversiHexModel implements ReversiModel {
 
     while (true) {
       y--;
-      if (!this.checkValidCoordinates(x,y) || this.getDiscAt(x,y).getColor() == color) {
+      if (!this.checkValidCoordinates(x,y) || this.getDiscAt(x,y).getColor() != color) {
         break;
       } else {
         List<Integer> tempList = new ArrayList<>(Arrays.asList(x,y));
@@ -177,7 +177,7 @@ public class ReversiHexModel implements ReversiModel {
 
     while (true) {
       y++;
-      if (!this.checkValidCoordinates(x,y) || this.getDiscAt(x,y).getColor() == color) {
+      if (!this.checkValidCoordinates(x,y) || this.getDiscAt(x,y).getColor() != color) {
         break;
       } else {
         List<Integer> tempList = new ArrayList<>(Arrays.asList(x,y));
