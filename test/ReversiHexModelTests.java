@@ -282,6 +282,14 @@ public class ReversiHexModelTests {
   public void testMoveLeft() {
 
   }
+
+  @Test
+  public void testBoardImage() {
+    ReversiHexModel rhm1 = new ReversiHexModel();
+    rhm1.startGame(7);
+    System.out.println("hello");
+
+  }
 }
 
 

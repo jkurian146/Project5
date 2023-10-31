@@ -10,11 +10,11 @@ public class Posn {
   }
 
   public int getX() {
-    return this.y;
+    return this.x;
   }
 
   public int getY() {
-    return this.x;
+    return this.y;
   }
 
   public void set(int x, int y) {

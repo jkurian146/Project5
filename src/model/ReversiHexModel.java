@@ -46,22 +46,34 @@ public class ReversiHexModel implements ReversiModel {
    */
   private void initBoard() {
     int middle = this.gameBoard.length / 2;
-    int SpacesMaxLeft = (middle % 2 == 0) ? middle - 2: middle - 1;
+    double MaxSpaces = (double) this.gameBoard.length - ((this.gameBoard.length + 1) / 2);
+    int SpacesMaxLeft = (int) Math.ceil(MaxSpaces / 2);
+    int SpacesMaxRight = (int) (MaxSpaces - SpacesMaxLeft);
     boolean middleCrossed = false;
-    int SpacesMaxRight = 0;
+    StringBuilder sb1 = new StringBuilder();
     for (int i = 0; i < this.gameBoard.length; i++) {
       int distanceFromMiddle = Math.abs(middle - i);
       int shift = (middleCrossed) ? 1 : -1;
-      int SpacesMaxLeftAdjusted = (distanceFromMiddle % 2 == 0) ? SpacesMaxLeft : SpacesMaxLeft + shift;
-      // stub have to figure out how the right adjusted works;
-      int SpacesMaxRightAdjusted = 0;
+      if (distanceFromMiddle % 2 == 0) {
+        SpacesMaxRight += shift;
+      }
+      if (distanceFromMiddle % 2 != 0) {
+        SpacesMaxLeft += shift;
+      }
+      sb1.append("\n");
       for (int j = 0; j < this.gameBoard[0].length; j++) {
-        // might have to be -1 for index purposes
-        if (j > SpacesMaxLeftAdjusted && j < this.gameBoard.length - SpacesMaxRightAdjusted) {
+        if (j >= SpacesMaxLeft && j < this.gameBoard.length - SpacesMaxRight) {
+          sb1.append("-");
           this.gameBoard[i][j] = new GameDisc(this.type,DiscColor.FACEDOWN);
+        } else {
+          sb1.append("n");
         }
       }
+      if (i == middle) {
+        middleCrossed = true;
+      }
     }
+    System.out.println(sb1.toString());
   }
 
   private void setPiece(int x, int y, DiscColor color) {
@@ -170,7 +182,6 @@ public class ReversiHexModel implements ReversiModel {
     }
     return list;
   }
-
   private List<List<Integer>> moveRight(int x, int y) {
     List<Integer> firstPos = new ArrayList<>(Arrays.asList(x,y));
     List<List<Integer>> list = new ArrayList<>();
@@ -195,57 +206,24 @@ public class ReversiHexModel implements ReversiModel {
     return list;
   }
 
+  private List<List<Posn>> bfs(Posn dest) {
+    List<List<Posn>> res = new ArrayList<>();
+    ArrayList<MoveDirection> movesAvailable = new ArrayList<>(Arrays.asList(MoveDirection.values()));
+    for (int i = 0; i < movesAvailable.size(); i++) {
+      MoveDirection currentMoveDirection = movesAvailable.get(i);
+      switch (currentMoveDirection) {
+        case LEFT:
+          break;
+        case RIGHT:
+          break;
 
-
-  private List<List<Integer>> moveDown(int x, int y) {
-    List<Integer> firstPos = new ArrayList<>(Arrays.asList(x,y));
-    List<List<Integer>> list = new ArrayList<>();
-    list.add(firstPos);
-    PlayerTurn current = this.currentTurn();
-    DiscColor color = this.getPlayerColor(current);
-
-    while (true) {
-      y--;
-      if (!this.checkValidCoordinates(x,y)) {
-        break;
-      } else if(this.getDiscAt(x,y).getColor() == color) {
-        break;
-      } else {
-        List<Integer> tempList = new ArrayList<>(Arrays.asList(x,y));
-        list.add(tempList);
       }
     }
-    if(list.size() == 1) {
-      list.remove(0);
-    }
-    return list;
+    return res;
   }
-
-  private List<List<Integer>> moveUp(int x, int y) {
-    List<Integer> firstPos = new ArrayList<>(Arrays.asList(x,y));
-    List<List<Integer>> list = new ArrayList<>();
-    list.add(firstPos);
-    PlayerTurn current = this.currentTurn();
-    DiscColor color = this.getPlayerColor(current);
-
-    while (true) {
-      y++;
-      if (!this.checkValidCoordinates(x,y)) {
-        break;
-      } else if(this.getDiscAt(x,y).getColor() == color) {
-        break;
-      } else {
-        List<Integer> tempList = new ArrayList<>(Arrays.asList(x,y));
-        list.add(tempList);
-        System.out.println("X: " + x + " Y: " + y);
-      }
-    }
-    if(list.size() == 1) {
-      list.remove(0);
-    }
-    return list;
+  private List<Posn> bfsHelper() {
+    return null;
   }
-
   @Override
   public void makeMove(int x, int y) {
     // Check if the game has not yet started
@@ -268,10 +246,9 @@ public class ReversiHexModel implements ReversiModel {
     List<List<List<Integer>>> moves = new ArrayList<>();
 
     // Add the results of your move methods (e.g., moveDown, moveUp, etc.) to the list
-    moves.add(this.moveDown(originalCoordinate.get(0), originalCoordinate.get(1)));
-    moves.add(this.moveUp(originalCoordinate.get(0), originalCoordinate.get(1)));
     moves.add(this.moveRight(originalCoordinate.get(0), originalCoordinate.get(1)));
     moves.add(this.moveLeft(originalCoordinate.get(0), originalCoordinate.get(1)));
+    //moves.add();
     // Add other move methods as needed
 
     // Check if all move lists are empty
