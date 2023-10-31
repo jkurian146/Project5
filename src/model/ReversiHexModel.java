@@ -45,31 +45,23 @@ public class ReversiHexModel implements ReversiModel {
    * Creates the initial gameBoard of a hexagonal reversi with the appropriate features.
    */
   private void initBoard() {
-    int maxSpacesAdjusted = (int) Math.ceil(((this.gameBoard.length - this.gameBoard.length + 1) / 2) / 2);
+    int middle = this.gameBoard.length / 2;
+    int SpacesMaxLeft = (middle % 2 == 0) ? middle - 2: middle - 1;
     boolean middleCrossed = false;
-    StringBuilder sb1 = new StringBuilder();
-    int middle = this.gameBoard[0].length / 2;
+    int SpacesMaxRight = 0;
     for (int i = 0; i < this.gameBoard.length; i++) {
-      sb1.append("\n");
-      for (int j = 0; j < this.gameBoard[i].length; j++) {
-        int newSpacesAdjusted = (middleCrossed) ? gameBoard[i].length - (maxSpacesAdjusted + 1) :
-                gameBoard[i].length - (maxSpacesAdjusted - 1);
-        if (j > maxSpacesAdjusted && j < ) {
-          this.gameBoard[i][j] = new GameDisc(DiscType.HEXDISC, DiscColor.FACEDOWN);
-          sb1.append("*");
-        } else {
-          sb1.append(" ");
+      int distanceFromMiddle = Math.abs(middle - i);
+      int shift = (middleCrossed) ? 1 : -1;
+      int SpacesMaxLeftAdjusted = (distanceFromMiddle % 2 == 0) ? SpacesMaxLeft : SpacesMaxLeft + shift;
+      // stub have to figure out how the right adjusted works;
+      int SpacesMaxRightAdjusted = 0;
+      for (int j = 0; j < this.gameBoard[0].length; j++) {
+        // might have to be -1 for index purposes
+        if (j > SpacesMaxLeftAdjusted && j < this.gameBoard.length - SpacesMaxRightAdjusted) {
+          this.gameBoard[i][j] = new GameDisc(this.type,DiscColor.FACEDOWN);
         }
       }
-      if (i % 2 == 0) {
-        maxSpacesAdjusted--;
-      }
-      if (maxSpacesAdjusted == 0) {
-        maxSpacesAdjusted = 0;
-      }
     }
-    this.setStartingPieces();
-    System.out.println(sb1.toString());
   }
 
   private void setPiece(int x, int y, DiscColor color) {
