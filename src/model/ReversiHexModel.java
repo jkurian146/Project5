@@ -151,17 +151,12 @@ public class ReversiHexModel implements ReversiModel {
     List<List<Integer>> list = new ArrayList<>();
     list.add(firstPos);
     PlayerTurn current = this.currentTurn();
-    boolean moveNotFound = true;
-    boolean currentCoordinateValid = true;
     DiscColor color = this.getPlayerColor(current);
 
-    while (currentCoordinateValid && moveNotFound) {
+    while (true) {
       y--;
-      if (!this.checkValidCoordinates(x,y)) {
-        currentCoordinateValid = false;
-      }
-      if (this.getDiscAt(x,y).getColor() == color) {
-        moveNotFound = false;
+      if (!this.checkValidCoordinates(x,y) || this.getDiscAt(x,y).getColor() == color) {
+        break;
       } else {
         List<Integer> tempList = new ArrayList<>(Arrays.asList(x,y));
         list.add(tempList);
@@ -178,20 +173,16 @@ public class ReversiHexModel implements ReversiModel {
     List<List<Integer>> list = new ArrayList<>();
     list.add(firstPos);
     PlayerTurn current = this.currentTurn();
-    boolean moveNotFound = true;
-    boolean currentCoordinateValid = true;
     DiscColor color = this.getPlayerColor(current);
 
-    while (currentCoordinateValid && moveNotFound) {
+    while (true) {
       y++;
-      if (!this.checkValidCoordinates(x,y)) {
-        currentCoordinateValid = false;
-      }
-      if (this.getDiscAt(x,y).getColor() == color) {
-        moveNotFound = false;
+      if (!this.checkValidCoordinates(x,y) || this.getDiscAt(x,y).getColor() == color) {
+        break;
       } else {
         List<Integer> tempList = new ArrayList<>(Arrays.asList(x,y));
         list.add(tempList);
+        System.out.println("X: " + x + " Y: " + y);
       }
     }
     if(list.size() == 1) {
@@ -204,6 +195,9 @@ public class ReversiHexModel implements ReversiModel {
   public void makeMove(int x, int y) {
     // Check if the game has not yet started
     this.gameNotYetStarted();
+    List<Integer> originalCoordinate = new ArrayList<>();
+    originalCoordinate.add(x);
+    originalCoordinate.add(y);
 
     // Check if the provided coordinates are valid
     if (!this.checkValidCoordinates(x, y)) {
@@ -219,8 +213,8 @@ public class ReversiHexModel implements ReversiModel {
     List<List<List<Integer>>> moves = new ArrayList<>();
 
     // Add the results of your move methods (e.g., moveDown, moveUp, etc.) to the list
-    moves.add(this.moveDown(x, y));
-//    moves.add(this.moveUp(x,y));
+    moves.add(this.moveDown(originalCoordinate.get(0), originalCoordinate.get(1)));
+    moves.add(this.moveUp(originalCoordinate.get(0), originalCoordinate.get(1)));
     // Add other move methods as needed
 
     // Check if all move lists are empty
