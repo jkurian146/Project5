@@ -260,6 +260,28 @@ public class ReversiHexModelTests {
 
   }
 
+  @Test
+  public void testMoveRight() {
+    // / 0 1 2 3 4 5 6 7
+    // 0 - - - - n n n n
+    // 1 - - x - - n n n
+    // 2 - - x x - - n n
+    // 3 - - x - o - - n
+    // 4 - - o o o - n n
+    // 5 - - - - - n n n
+    // 6 - - - - n n n n
+    model.startGame(7);
+    model.makeMove(4,4);
+    Assert.assertEquals(DiscColor.BLACK, model.getDiscAt(4,4).getColor());
+    Assert.assertEquals(DiscColor.BLACK, model.getDiscAt(3,4).getColor());
+    Assert.assertEquals(DiscColor.BLACK, model.getDiscAt(2,4).getColor());
+
+  }
+
+  @Test
+  public void testMoveLeft() {
+
+  }
 }
 
 
