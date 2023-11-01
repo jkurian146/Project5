@@ -42,12 +42,31 @@ public class ReversiHexModel implements ReversiModel {
   }
 
   /**
-   * Creates the initial gameBoard of a hexagonal reversi with the appropriate features.
+   * Helps create initial game board by placing discs into the null 2D array gameBoard.
+   *
+   * @param spacesMaxLeft The maximum null spaces for this row to the left of the discs
+   * @param spacesMaxRight The maximum null spaces for this row to the right of the discs
+   * @param sb1
+   * @param i
    */
-  private void initBoard() {
+  private void placeGameDiscs(int spacesMaxLeft, int spacesMaxRight, StringBuilder sb1, int i) {
+    sb1.append("\n");
+    for (int j = 0; j < this.gameBoard[0].length; j++) {
+      if (j >= spacesMaxLeft && j < this.gameBoard.length - spacesMaxRight) {
+        sb1.append("-");
+        this.gameBoard[i][j] = new GameDisc(this.type, DiscColor.FACEDOWN);
+      } else {
+        sb1.append("n");
+      }
+    }
+  }
+
+  /**
+   * Helps create the initial game board when the middle row is odd.
+   */
+
+  private void initBoardWithOddMiddle() {
     int middle = this.gameBoard.length / 2;
-
-
     double MaxSpaces = (double) this.gameBoard.length - ((double) (this.gameBoard.length + 1) / 2);
     int SpacesMaxLeft = (int) Math.ceil(MaxSpaces / 2);
     int SpacesMaxRight = (int) (MaxSpaces - SpacesMaxLeft);
@@ -67,15 +86,7 @@ public class ReversiHexModel implements ReversiModel {
         }
       }
 
-      sb1.append("\n");
-      for (int j = 0; j < this.gameBoard[0].length; j++) {
-        if (j >= SpacesMaxLeft && j < this.gameBoard.length - SpacesMaxRight) {
-          sb1.append("-");
-          this.gameBoard[i][j] = new GameDisc(this.type, DiscColor.FACEDOWN);
-        } else {
-          sb1.append("n");
-        }
-      }
+      this.placeGameDiscs(SpacesMaxLeft, SpacesMaxRight, sb1, i);
 
       if (!middleCrossed) {
         if (distanceFromMiddle % 2 == 0) {
@@ -97,6 +108,64 @@ public class ReversiHexModel implements ReversiModel {
     System.out.println(sb1.toString());
   }
 
+  /**
+   * Helps create the initial game board when the middle row is even.
+   */
+  private void initBoardWithEvenMiddle() {
+    int middle = this.gameBoard.length / 2;
+
+    double MaxSpaces = (double) this.gameBoard.length - ((double) (this.gameBoard.length + 1) / 2);
+    int SpacesMaxLeft = (int) Math.ceil(MaxSpaces / 2);
+    int SpacesMaxRight = (int) (MaxSpaces - SpacesMaxLeft);
+    boolean middleCrossed = false;
+    StringBuilder sb1 = new StringBuilder();
+
+    for (int i = 0; i < this.gameBoard.length; i++) {
+      int distanceFromMiddle = Math.abs(middle - i);
+
+      if (middleCrossed) {
+        if (distanceFromMiddle % 2 != 0) {
+          SpacesMaxRight += 1;
+        }
+      }
+
+      this.placeGameDiscs(SpacesMaxLeft, SpacesMaxRight, sb1, i);
+
+      if (!middleCrossed) {
+        if (distanceFromMiddle % 2 != 0) {
+          SpacesMaxRight -= 1;
+        } else {
+          SpacesMaxLeft -= 1;
+        }
+      } else {
+        if (distanceFromMiddle % 2 != 0) {
+          SpacesMaxLeft += 1;
+        }
+      }
+
+      if (i == middle) {
+        middleCrossed = true;
+        SpacesMaxLeft = 0;
+      }
+    }
+    System.out.println(sb1.toString());
+  }
+
+
+  /**
+   * Creates the initial game board of a hexagonal reversi.
+   */
+  private void initBoard() {
+    int middle = this.gameBoard.length / 2;
+
+    if (middle % 2 == 0) {
+      this.initBoardWithEvenMiddle();
+    } else {
+      this.initBoardWithOddMiddle();
+    }
+    setStartingPieces();
+  }
+
   private void setPiece(int x, int y, DiscColor color) {
     GameDisc replacementDisc = new GameDisc(this.type, color);
 
@@ -104,23 +173,13 @@ public class ReversiHexModel implements ReversiModel {
   }
 
   private void setStartingPieces() {
-
-
-    this.setPiece(2, 2, DiscColor.BLACK);
-    this.setPiece(2, 4, DiscColor.BLACK);
-    this.setPiece(4, 3, DiscColor.BLACK);
-    this.setPiece(3, 2, DiscColor.WHITE);
-    this.setPiece(2, 3, DiscColor.WHITE);
-    this.setPiece(3, 4, DiscColor.WHITE);
-
-    // / 0 1 2 3 4 5 6
-    // 0 - - - - n n n
-    // 1 - - - - - n n
-    // 2 - - o x - - n
-    // 3 - - x - o - -
-    // 4 - - o x - - n
-    // 5 - - - - - n n
-    // 6 - - - - n n n
+    int middle = this.gameBoard.length / 2;
+    this.setPiece(middle + 1, middle, DiscColor.BLACK); // 4,3
+    this.setPiece(middle, middle - 1, DiscColor.BLACK); // 3,2
+    this.setPiece(middle, middle + 1, DiscColor.BLACK); // 3,4
+    this.setPiece(middle + 1, middle + 1, DiscColor.WHITE); // 4,4
+    this.setPiece(middle + 1, middle - 1, DiscColor.WHITE); // 4,2
+    this.setPiece(middle - 1, middle, DiscColor.WHITE); // 2,3
   }
 
   public Disc[][] getBoard() {
@@ -182,27 +241,21 @@ public class ReversiHexModel implements ReversiModel {
 
   private List<List<List<Integer>>> bfs(int destX, int destY) {
     List<List<List<Integer>>> res = new ArrayList<>();
-    ArrayList<MoveDirection> movesAvailable = new ArrayList<>(Arrays.asList(MoveDirection.values()));
-    for (int i = 0; i < movesAvailable.size(); i++) {
-      MoveDirection currentMoveDirection = movesAvailable.get(i);
-      switch (currentMoveDirection) {
-        case LEFT:
-          res.add(bfsHelper(destX,destY,MoveDirection.LEFT,new ArrayList<>()));
-        case RIGHT:
-          res.add(bfsHelper(destX,destY,MoveDirection.RIGHT, new ArrayList<>()));
-        case UPLEFT:
-          res.add(bfsHelper(destX,destY,MoveDirection.UPLEFT, new ArrayList<>()));
-        case UPRIGHT:
-          res.add(bfsHelper(destX,destY,MoveDirection.UPRIGHT, new ArrayList<>()));
-        case DOWNLEFT:
-          res.add(bfsHelper(destX,destY,MoveDirection.DOWNLEFT, new ArrayList<>()));
-        case DOWNRIGHT:
-          res.add(bfsHelper(destX,destY,MoveDirection.DOWNRIGHT, new ArrayList<>()));
-      }
-    }
+    res.add(bfsHelper(destX,destY,MoveDirection.LEFT,new ArrayList<>(), true));
+    res.add(bfsHelper(destX,destY,MoveDirection.RIGHT, new ArrayList<>(), true));
+    res.add(bfsHelper(destX,destY,MoveDirection.UPLEFT, new ArrayList<>(), true));
+    res.add(bfsHelper(destX,destY,MoveDirection.UPRIGHT, new ArrayList<>(), true));
+    res.add(bfsHelper(destX,destY,MoveDirection.DOWNLEFT, new ArrayList<>(), true));
+    res.add(bfsHelper(destX,destY,MoveDirection.DOWNRIGHT, new ArrayList<>(), true));
     return res;
   }
-  private List<List<Integer>> bfsHelper(int x, int y, MoveDirection moveDirection, List<List<Integer>> res) {
+  private List<List<Integer>> bfsHelper(int x, int y, MoveDirection moveDirection, List<List<Integer>> res,
+                                        boolean firstPass) {
+    boolean passStatus = firstPass;
+    if (passStatus) {
+      res.add(Arrays.asList(x,y));
+      passStatus = false;
+    }
     // will only return for one direction. this makes the res 2d not 3d
     DiscColor currentColor = this.getPlayerColor(this.pt);
     List<Integer> nextPos = MoveRules.applyShiftBasedOnDirection(x,y,moveDirection);
@@ -215,12 +268,13 @@ public class ReversiHexModel implements ReversiModel {
       return new ArrayList<>();
     }
     if (this.getDiscAt(nextPosX,nextPosY).getColor() == currentColor) {
-      res.add(Arrays.asList(nextPos.get(0), nextPos.get(1)));
       return res;
     }
-    res.add(Arrays.asList(nextPos.get(0), nextPos.get(1)));
-    bfsHelper(x, y, moveDirection, res);
-    return null;
+    if (this.getDiscAt(nextPosX,nextPosY).getColor() != currentColor) {
+      res.add(Arrays.asList(nextPos.get(0), nextPos.get(1)));
+      bfsHelper(nextPos.get(0), nextPos.get(1), moveDirection, res, passStatus);
+    }
+    return res;
   }
   @Override
   public void makeMove(int x, int y) {

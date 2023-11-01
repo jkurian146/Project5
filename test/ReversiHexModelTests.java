@@ -87,209 +87,48 @@ public class ReversiHexModelTests {
   }
 
   @Test
-  public void testIsDiscFlippedValidAndInvalidCoordinates() {
+  public void testSimpleMoves() {
     model.startGame(7);
-
-    Assert.assertFalse(model.isDiscFlipped(0, 0));
-    Assert.assertFalse(model.isDiscFlipped(0, 1));
-    Assert.assertFalse(model.isDiscFlipped(0, 2));
-    Assert.assertFalse(model.isDiscFlipped(0, 3));
-    Assert.assertFalse(model.isDiscFlipped(0, 4));
-    Assert.assertFalse(model.isDiscFlipped(0, 5));
-    Assert.assertFalse(model.isDiscFlipped(0, 6));
-    Assert.assertFalse(model.isDiscFlipped(1, 0));
-    Assert.assertFalse(model.isDiscFlipped(1, 1));
-    Assert.assertFalse(model.isDiscFlipped(1, 2));
-    Assert.assertFalse(model.isDiscFlipped(1, 3));
-    Assert.assertFalse(model.isDiscFlipped(1, 4));
-    Assert.assertFalse(model.isDiscFlipped(1, 5));
-    Assert.assertFalse(model.isDiscFlipped(1, 6));
-    Assert.assertFalse(model.isDiscFlipped(2, 0));
-    Assert.assertFalse(model.isDiscFlipped(2, 1));
-    Assert.assertFalse(model.isDiscFlipped(2, 5));
-    Assert.assertFalse(model.isDiscFlipped(2, 6));
-    Assert.assertFalse(model.isDiscFlipped(3, 0));
-    Assert.assertFalse(model.isDiscFlipped(3, 1));
-    Assert.assertFalse(model.isDiscFlipped(2, 5));
-    Assert.assertFalse(model.isDiscFlipped(2, 6));
-    Assert.assertFalse(model.isDiscFlipped(4, 1));
-    Assert.assertFalse(model.isDiscFlipped(4, 2));
-    Assert.assertFalse(model.isDiscFlipped(4, 4));
-    Assert.assertFalse(model.isDiscFlipped(4, 5));
-    Assert.assertFalse(model.isDiscFlipped(5, 2));
-    Assert.assertFalse(model.isDiscFlipped(5, 3));
-    Assert.assertFalse(model.isDiscFlipped(5, 4));
-    Assert.assertFalse(model.isDiscFlipped(6, 3));
-
-    Assert.assertTrue(model.isDiscFlipped(2, 2));
-    Assert.assertTrue(model.isDiscFlipped(2, 3));
-    Assert.assertTrue(model.isDiscFlipped(2, 4));
-    Assert.assertTrue(model.isDiscFlipped(2, 4));
-    Assert.assertTrue(model.isDiscFlipped(2, 2));
-    Assert.assertTrue(model.isDiscFlipped(4, 3));
-
-
-    Assert.assertThrows(IllegalArgumentException.class,
-            () -> model.isDiscFlipped(4, 0));
-    Assert.assertThrows(IllegalArgumentException.class,
-            () -> model.isDiscFlipped(4, 6));
-    Assert.assertThrows(IllegalArgumentException.class,
-            () -> model.isDiscFlipped(5, 0));
-    Assert.assertThrows(IllegalArgumentException.class,
-            () -> model.isDiscFlipped(5, 1));
-    Assert.assertThrows(IllegalArgumentException.class,
-            () -> model.isDiscFlipped(5, 5));
-    Assert.assertThrows(IllegalArgumentException.class,
-            () -> model.isDiscFlipped(5, 6));
-    Assert.assertThrows(IllegalArgumentException.class,
-            () -> model.isDiscFlipped(6, 0));
-    Assert.assertThrows(IllegalArgumentException.class,
-            () -> model.isDiscFlipped(6, 1));
-    Assert.assertThrows(IllegalArgumentException.class,
-            () -> model.isDiscFlipped(6, 2));
-    Assert.assertThrows(IllegalArgumentException.class,
-            () -> model.isDiscFlipped(6, 4));
-    Assert.assertThrows(IllegalArgumentException.class,
-            () -> model.isDiscFlipped(6, 5));
-    Assert.assertThrows(IllegalArgumentException.class,
-            () -> model.isDiscFlipped(6, 6));
-
-  }
-
-  @Test
-  public void testMoveDown() {
-    model.startGame(7);
-    // / 0 1 2 3 4 5 6 7
-    // 0 - - - - n n n n
-    // 1 - - - - - n n n
-    // 2 - - o x - - n n
-    // 3 - - x - o - - n
-    // 4 - - o x - - n n
-    // 5 - - - - - n n n
-    // 6 - - - - n n n n
-    // x is white o is black
-    // starting state, in 2d array form, not in actual textual view form
-
     model.pass();
-
-    // make a move downwards with white, gaining control of a new disc and capturing a black one
-    model.makeMove(2, 5);
-    Assert.assertEquals(DiscColor.WHITE, model.getDiscAt(2, 4).getColor());
-    Assert.assertEquals(DiscColor.WHITE, model.getDiscAt(2, 5).getColor());
-
-    // / 0 1 2 3 4 5 6 7
-    // 0 - - - - n n n n
-    // 1 - - - - - n n n
-    // 2 - - o x - - n n
-    // 3 - - x - o - - n
-    // 4 - - x x - - n n
-    // 5 - - x - - n n n
-    // 6 - - - - n n n n
-    // x is white o is black
-   // result of move
-
+    // up right
+    model.makeMove(3,1);
+    Assert.assertEquals(DiscColor.WHITE, model.getDiscAt(2,3).getColor());
+    Assert.assertEquals(DiscColor.WHITE, model.getDiscAt(3,2).getColor());
+    Assert.assertEquals(DiscColor.WHITE, model.getDiscAt(3,1).getColor());
+    // up left
+    model.makeMove(3,0);
+    Assert.assertEquals(DiscColor.BLACK, model.getDiscAt(3,0).getColor());
+    Assert.assertEquals(DiscColor.BLACK, model.getDiscAt(3,1).getColor());
+    Assert.assertEquals(DiscColor.BLACK, model.getDiscAt(4,2).getColor());
+    Assert.assertEquals(DiscColor.BLACK, model.getDiscAt(4,3).getColor());
     model.pass();
-
-    Assert.assertThrows(IllegalStateException.class, () -> model.makeMove(2, 6));
-
-    // / 0 1 2 3 4 5 6 7
-    // 0 - - - - n n n n
-    // 1 - - - - - n n n
-    // 2 - - o x - - n n
-    // 3 - - x - o - - n
-    // 4 - - x x - - n n
-    // 5 - - x - - n n n
-    // 6 - - e - n n n n
-    // x is white o is black
-    // White is trying to move to the disc denoted as 'e', which is an invalid move
-    // an exception is thrown
-
-    // pass turn to black
-    model.pass();
-
-    // black makes a move downwards capturing 3 white discs and gaining control of a new disc
-    model.makeMove(2, 6);
-    Assert.assertEquals(DiscColor.BLACK, model.getDiscAt(2, 6).getColor());
-    Assert.assertEquals(DiscColor.BLACK, model.getDiscAt(2, 5).getColor());
-    Assert.assertEquals(DiscColor.BLACK, model.getDiscAt(2, 4).getColor());
-    Assert.assertEquals(DiscColor.BLACK, model.getDiscAt(2, 3).getColor());
-    // / 0 1 2 3 4 5 6 7
-    // 0 - - - - n n n n
-    // 1 - - - - - n n n
-    // 2 - - o x - - n n
-    // 3 - - o - o - - n
-    // 4 - - o x - - n n
-    // 5 - - o - - n n n
-    // 6 - - o - n n n n
-    // x is white o is black
-    // result of move
-  }
-
-
-  @Test
-  public void moveUp() {
-    model.startGame(7);
-
-    // / 0 1 2 3 4 5 6 7
-    // 0 - - - - n n n n
-    // 1 - - - - - n n n
-    // 2 - - o x - - n n
-    // 3 - - x - o - - n
-    // 4 - - o x - - n n
-    // 5 - - - - - n n n
-    // 6 - - - - n n n n
-    // x is white o is black
-    // move up
-    // 2,1, 2,2 2,3 end  (1,2 2,2 3,2)
-    // move down
-    // 2,1 2,0 end (1,2 0,2)
-    // move down means that we are picking a coordinate and
-    model.pass();
-    model.makeMove(2, 1);
-    Assert.assertEquals(DiscColor.WHITE, model.getDiscAt(2, 1).getColor());
-    Assert.assertEquals(DiscColor.WHITE, model.getDiscAt(2, 2).getColor());
-
-    // / 0 1 2 3 4 5 6 7
-    // 0 - - - - n n n n
-    // 1 - - x - - n n n
-    // 2 - - x x - - n n
-    // 3 - - x - o - - n
-    // 4 - - o x - - n n
-    // 5 - - - - - n n n
-    // 6 - - - - n n n n
-
-  }
-
-  @Test
-  public void testMoveRight() {
-    // / 0 1 2 3 4 5 6 7
-    // 0 - - - - n n n n
-    // 1 - - x - - n n n
-    // 2 - - x x - - n n
-    // 3 - - x - o - - n
-    // 4 - - o o o - n n
-    // 5 - - - - - n n n
-    // 6 - - - - n n n n
-    model.startGame(7);
-    model.makeMove(4,4);
-    Assert.assertEquals(DiscColor.BLACK, model.getDiscAt(4,4).getColor());
-    Assert.assertEquals(DiscColor.BLACK, model.getDiscAt(3,4).getColor());
+    // down left
+    model.makeMove(2,4);
     Assert.assertEquals(DiscColor.BLACK, model.getDiscAt(2,4).getColor());
+    Assert.assertEquals(DiscColor.BLACK, model.getDiscAt(2,3).getColor());
+    Assert.assertEquals(DiscColor.BLACK, model.getDiscAt(3,2).getColor());
+    Assert.assertEquals(DiscColor.BLACK, model.getDiscAt(3,1).getColor());
+    // regular left
+    model.makeMove(1,4);
+    Assert.assertEquals(DiscColor.WHITE, model.getDiscAt(1,4).getColor());
+    Assert.assertEquals(DiscColor.WHITE, model.getDiscAt(2,4).getColor());
+    Assert.assertEquals(DiscColor.WHITE, model.getDiscAt(3,4).getColor());
+    Assert.assertEquals(DiscColor.WHITE, model.getDiscAt(4,4).getColor());
+    // down right
+    model.makeMove(3,5);
+    Assert.assertEquals(DiscColor.BLACK, model.getDiscAt(2,3).getColor());
+    Assert.assertEquals(DiscColor.BLACK, model.getDiscAt(3,4).getColor());
+    Assert.assertEquals(DiscColor.BLACK, model.getDiscAt(3,5).getColor());
+    // regular right
+    model.makeMove(5,4);
+    Assert.assertEquals(DiscColor.WHITE, model.getDiscAt(5,4).getColor());
+    Assert.assertEquals(DiscColor.WHITE, model.getDiscAt(4,4).getColor());
+    Assert.assertEquals(DiscColor.WHITE, model.getDiscAt(3,4).getColor());
+    Assert.assertEquals(DiscColor.WHITE, model.getDiscAt(2,4).getColor());
+    Assert.assertEquals(DiscColor.WHITE, model.getDiscAt(1,4).getColor());
 
   }
 
-  @Test
-  public void testMoveLeft() {
-
-  }
-
-  @Test
-  public void testBoardImage() {
-    ReversiHexModel rhm1 = new ReversiHexModel();
-    rhm1.startGame(7);
-    System.out.println("hello");
-
-  }
 }
 
 
