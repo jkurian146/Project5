@@ -128,6 +128,12 @@ public class ReversiHexModelTests {
   }
 
   @Test
+  public void testMoveToMiddle() {
+    model.startGame(7);
+    model.makeMove(3,3);
+  }
+
+  @Test
   public void integrationMoves() {
     model.startGame(7);
 

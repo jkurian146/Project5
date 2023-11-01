@@ -255,28 +255,32 @@ public class ReversiHexModel implements ReversiModel {
   }
   private List<List<Integer>> bfsHelper(int x, int y, MoveDirection moveDirection, List<List<Integer>> res,
                                         boolean firstPass) {
-    boolean passStatus = firstPass;
-    if (passStatus) {
-      res.add(Arrays.asList(x,y));
-      passStatus = false;
-    }
-    // will only return for one direction. this makes the res 2d not 3d
-    DiscColor currentColor = this.getPlayerColor(this.pt);
+    DiscColor playerTurnColor = this.getPlayerColor(this.pt);
     List<Integer> nextPos = MoveRules.applyShiftBasedOnDirection(x,y,moveDirection);
     int nextPosX = nextPos.get(0);
     int nextPosY = nextPos.get(1);
-    if (!this.checkValidCoordinates(nextPosX,nextPosY)) {
+    if (!this.checkValidCoordinates(nextPosX, nextPosY)) {
       return new ArrayList<>();
     }
-    if (this.getDiscAt(nextPosX,nextPosY).getColor() == DiscColor.FACEDOWN) {
-      return new ArrayList<>();
-    }
-    if (this.getDiscAt(nextPosX,nextPosY).getColor() == currentColor) {
-      return res;
-    }
-    if (this.getDiscAt(nextPosX,nextPosY).getColor() != currentColor) {
-      res.add(Arrays.asList(nextPos.get(0), nextPos.get(1)));
-      bfsHelper(nextPos.get(0), nextPos.get(1), moveDirection, res, passStatus);
+    if (firstPass) {
+      DiscColor opponentTurnColor = this.getPlayerColor(getOpponent(this.pt));
+      if (opponentTurnColor == this.getDiscAt(nextPosX, nextPosY).getColor()) {
+        res.add(Arrays.asList(x, y));
+        res.add(Arrays.asList(nextPosX, nextPosY));
+        bfsHelper(nextPosX, nextPosY, moveDirection, res, false);
+      } else {
+        res = new ArrayList<>();
+      }
+    } else {
+      if (this.getDiscAt(nextPosX,nextPosY).getColor() == playerTurnColor) {
+        return res;
+      } else if (this.getDiscAt(nextPosX,nextPosY).getColor() == DiscColor.FACEDOWN) {
+        res = new ArrayList<>();
+        return res;
+      } else {
+        res.add(Arrays.asList(nextPosX,nextPosY));
+        bfsHelper(nextPosX,nextPosY,moveDirection,res,false);
+      }
     }
     return res;
   }
