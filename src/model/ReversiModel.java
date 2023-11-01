@@ -81,7 +81,7 @@ public interface ReversiModel {
    * @param x the coordinate of the desired disc on the game board
    * @return the desired disc
    * @throws IllegalStateException    if the game hasn't started yet
-   * @throws IllegalArgumentException if the Posn is invalid
+   * @throws IllegalArgumentException if the int x,y is invalid
    */
   Disc getDiscAt(int x,  int y);
 

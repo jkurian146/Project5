@@ -255,34 +255,37 @@ public class ReversiHexModel implements ReversiModel {
   }
   private List<List<Integer>> bfsHelper(int x, int y, MoveDirection moveDirection, List<List<Integer>> res,
                                         boolean firstPass) {
-    DiscColor playerTurnColor = this.getPlayerColor(this.pt);
-    List<Integer> nextPos = MoveRules.applyShiftBasedOnDirection(x,y,moveDirection);
-    int nextPosX = nextPos.get(0);
-    int nextPosY = nextPos.get(1);
-    if (!this.checkValidCoordinates(nextPosX, nextPosY)) {
-      return new ArrayList<>();
-    }
-    if (firstPass) {
-      DiscColor opponentTurnColor = this.getPlayerColor(getOpponent(this.pt));
-      if (opponentTurnColor == this.getDiscAt(nextPosX, nextPosY).getColor()) {
-        res.add(Arrays.asList(x, y));
-        res.add(Arrays.asList(nextPosX, nextPosY));
-        bfsHelper(nextPosX, nextPosY, moveDirection, res, false);
-      } else {
-        res = new ArrayList<>();
+
+    while (true) {
+      res.add(Arrays.asList(x,y));
+      DiscColor playerTurnColor = this.getPlayerColor(this.pt);
+      List<Integer> nextPos = MoveRules.applyShiftBasedOnDirection(x,y,moveDirection);
+      int nextPosX = nextPos.get(0);
+      int nextPosY = nextPos.get(1);
+      x = nextPosX;
+      y = nextPosY;
+      if (!this.checkValidCoordinates(nextPosX, nextPosY)) {
+        return new ArrayList<>();
       }
-    } else {
-      if (this.getDiscAt(nextPosX,nextPosY).getColor() == playerTurnColor) {
-        return res;
-      } else if (this.getDiscAt(nextPosX,nextPosY).getColor() == DiscColor.FACEDOWN) {
-        res = new ArrayList<>();
-        return res;
+      if (firstPass) {
+        DiscColor opponentTurnColor = this.getPlayerColor(getOpponent(this.pt));
+        if (opponentTurnColor == this.getDiscAt(nextPosX, nextPosY).getColor()) {
+          res.add(Arrays.asList(x, y));
+          res.add(Arrays.asList(nextPosX, nextPosY));
+        } else {
+          return new ArrayList<>();
+        }
+        firstPass = false;
       } else {
-        res.add(Arrays.asList(nextPosX,nextPosY));
-        bfsHelper(nextPosX,nextPosY,moveDirection,res,false);
+        if (this.getDiscAt(nextPosX,nextPosY).getColor() == playerTurnColor) {
+          return res;
+        } else if (this.getDiscAt(nextPosX,nextPosY).getColor() == DiscColor.FACEDOWN) {
+          return new ArrayList<>();
+        } else {
+          res.add(Arrays.asList(nextPosX,nextPosY));
+        }
       }
     }
-    return res;
   }
   @Override
   public void makeMove(int x, int y) {
@@ -336,12 +339,13 @@ public class ReversiHexModel implements ReversiModel {
 
   @Override
   public Boolean isGameOver() {
+    this.gameNotYetStarted();
     boolean noMoves = this.noMoreLegalMoves();
     boolean twoPassesInARow = this.consecutivePasses();
     boolean currentPlayerLost = this.getPlayerScore(this.pt) == 0;
     boolean oppositePlayerLost = this.getPlayerScore(this.getOpponent(this.pt)) == 0;
 
-    if(twoPassesInARow || noMoves) {
+    if (twoPassesInARow) {
       this.state = GameState.STALEMATE;
       return true;
     }
@@ -351,6 +355,10 @@ public class ReversiHexModel implements ReversiModel {
     }
     if (oppositePlayerLost) {
       this.state = (this.pt == PlayerTurn.PLAYER1) ? GameState.PLAYER1WIN : GameState.PLAYER2WIN;
+      return true;
+    }
+    if (noMoves) {
+      this.state = GameState.STALEMATE;
       return true;
     }
     return false;
