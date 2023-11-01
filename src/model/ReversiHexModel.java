@@ -46,29 +46,50 @@ public class ReversiHexModel implements ReversiModel {
    */
   private void initBoard() {
     int middle = this.gameBoard.length / 2;
-    double MaxSpaces = (double) this.gameBoard.length - ((this.gameBoard.length + 1) / 2);
+
+
+    double MaxSpaces = (double) this.gameBoard.length - ((double) (this.gameBoard.length + 1) / 2);
     int SpacesMaxLeft = (int) Math.ceil(MaxSpaces / 2);
     int SpacesMaxRight = (int) (MaxSpaces - SpacesMaxLeft);
     boolean middleCrossed = false;
     StringBuilder sb1 = new StringBuilder();
+
     for (int i = 0; i < this.gameBoard.length; i++) {
       int distanceFromMiddle = Math.abs(middle - i);
-      int shift = (middleCrossed) ? 1 : -1;
-      if (distanceFromMiddle % 2 == 0) {
-        SpacesMaxRight += shift;
+
+      if (!middleCrossed) {
+        if (distanceFromMiddle % 2 == 0) {
+          SpacesMaxLeft -= 1;
+        }
+      } else {
+        if (distanceFromMiddle % 2 != 0) {
+          SpacesMaxLeft += 1;
+        }
       }
-      if (distanceFromMiddle % 2 != 0) {
-        SpacesMaxLeft += shift;
-      }
+
       sb1.append("\n");
       for (int j = 0; j < this.gameBoard[0].length; j++) {
         if (j >= SpacesMaxLeft && j < this.gameBoard.length - SpacesMaxRight) {
           sb1.append("-");
-          this.gameBoard[i][j] = new GameDisc(this.type,DiscColor.FACEDOWN);
+          this.gameBoard[i][j] = new GameDisc(this.type, DiscColor.FACEDOWN);
         } else {
           sb1.append("n");
         }
       }
+
+      if (!middleCrossed) {
+        if (distanceFromMiddle % 2 == 0) {
+          SpacesMaxRight -= 1;
+        }
+      } else {
+        if (SpacesMaxRight < 0) {
+          SpacesMaxRight = 0;
+        }
+        if (distanceFromMiddle % 2 != 0) {
+          SpacesMaxRight += 1;
+        }
+      }
+
       if (i == middle) {
         middleCrossed = true;
       }
@@ -159,69 +180,46 @@ public class ReversiHexModel implements ReversiModel {
     return this.gameBoard[y][x] != null;
   }
 
-  private List<List<Integer>> moveLeft(int x, int y) {
-    List<Integer> firstPos = new ArrayList<>(Arrays.asList(x,y));
-    List<List<Integer>> list = new ArrayList<>();
-    list.add(firstPos);
-    PlayerTurn current = this.currentTurn();
-    DiscColor color = this.getPlayerColor(current);
-
-    while (true) {
-      x--;
-      if (!this.checkValidCoordinates(x,y)) {
-        break;
-      } else if(this.getDiscAt(x,y).getColor() == color) {
-        break;
-      } else {
-        List<Integer> tempList = new ArrayList<>(Arrays.asList(x,y));
-        list.add(tempList);
-      }
-    }
-    if(list.size() == 1) {
-      list.remove(0);
-    }
-    return list;
-  }
-  private List<List<Integer>> moveRight(int x, int y) {
-    List<Integer> firstPos = new ArrayList<>(Arrays.asList(x,y));
-    List<List<Integer>> list = new ArrayList<>();
-    list.add(firstPos);
-    PlayerTurn current = this.currentTurn();
-    DiscColor color = this.getPlayerColor(current);
-
-    while (true) {
-      x++;
-      if (!this.checkValidCoordinates(x,y)) {
-        break;
-      } else if(this.getDiscAt(x,y).getColor() == color) {
-        break;
-      } else {
-        List<Integer> tempList = new ArrayList<>(Arrays.asList(x,y));
-        list.add(tempList);
-      }
-    }
-    if(list.size() == 1) {
-      list.remove(0);
-    }
-    return list;
-  }
-
-  private List<List<Posn>> bfs(Posn dest) {
-    List<List<Posn>> res = new ArrayList<>();
+  private List<List<List<Integer>>> bfs(int destX, int destY) {
+    List<List<List<Integer>>> res = new ArrayList<>();
     ArrayList<MoveDirection> movesAvailable = new ArrayList<>(Arrays.asList(MoveDirection.values()));
     for (int i = 0; i < movesAvailable.size(); i++) {
       MoveDirection currentMoveDirection = movesAvailable.get(i);
       switch (currentMoveDirection) {
         case LEFT:
-          break;
+          res.add(bfsHelper(destX,destY,MoveDirection.LEFT,new ArrayList<>()));
         case RIGHT:
-          break;
-
+          res.add(bfsHelper(destX,destY,MoveDirection.RIGHT, new ArrayList<>()));
+        case UPLEFT:
+          res.add(bfsHelper(destX,destY,MoveDirection.UPLEFT, new ArrayList<>()));
+        case UPRIGHT:
+          res.add(bfsHelper(destX,destY,MoveDirection.UPRIGHT, new ArrayList<>()));
+        case DOWNLEFT:
+          res.add(bfsHelper(destX,destY,MoveDirection.DOWNLEFT, new ArrayList<>()));
+        case DOWNRIGHT:
+          res.add(bfsHelper(destX,destY,MoveDirection.DOWNRIGHT, new ArrayList<>()));
       }
     }
     return res;
   }
-  private List<Posn> bfsHelper() {
+  private List<List<Integer>> bfsHelper(int x, int y, MoveDirection moveDirection, List<List<Integer>> res) {
+    // will only return for one direction. this makes the res 2d not 3d
+    DiscColor currentColor = this.getPlayerColor(this.pt);
+    List<Integer> nextPos = MoveRules.applyShiftBasedOnDirection(x,y,moveDirection);
+    int nextPosX = nextPos.get(0);
+    int nextPosY = nextPos.get(1);
+    if (!this.checkValidCoordinates(nextPosX,nextPosY)) {
+      return new ArrayList<>();
+    }
+    if (this.getDiscAt(nextPosX,nextPosY).getColor() == DiscColor.FACEDOWN) {
+      return new ArrayList<>();
+    }
+    if (this.getDiscAt(nextPosX,nextPosY).getColor() == currentColor) {
+      res.add(Arrays.asList(nextPos.get(0), nextPos.get(1)));
+      return res;
+    }
+    res.add(Arrays.asList(nextPos.get(0), nextPos.get(1)));
+    bfsHelper(x, y, moveDirection, res);
     return null;
   }
   @Override
@@ -231,34 +229,20 @@ public class ReversiHexModel implements ReversiModel {
     List<Integer> originalCoordinate = new ArrayList<>();
     originalCoordinate.add(x);
     originalCoordinate.add(y);
-
-    // Check if the provided coordinates are valid
     if (!this.checkValidCoordinates(x, y)) {
       throw new IllegalArgumentException("Invalid coordinates provided by the user.");
     }
-
-    // Check if the specified position contains a facedown disc
     if (this.getDiscAt(x, y).getColor() != DiscColor.FACEDOWN) {
       throw new IllegalStateException("Invalid Move: Disc is not facedown.");
     }
 
-    // Initialize a list for possible moves
-    List<List<List<Integer>>> moves = new ArrayList<>();
-
-    // Add the results of your move methods (e.g., moveDown, moveUp, etc.) to the list
-    moves.add(this.moveRight(originalCoordinate.get(0), originalCoordinate.get(1)));
-    moves.add(this.moveLeft(originalCoordinate.get(0), originalCoordinate.get(1)));
-    //moves.add();
-    // Add other move methods as needed
-
-    // Check if all move lists are empty
+    List<List<List<Integer>>> moves = bfs(x,y);
     boolean allEmptyLists = moves.stream().allMatch(List::isEmpty);
 
     if (allEmptyLists) {
       throw new IllegalStateException("Invalid move: No valid moves found.");
     }
 
-    // Apply color filter to each inner list and toggle the player
     for (List<List<Integer>> l : moves ) {
       l.forEach(innerList -> applyColorFilter(innerList, this.getPlayerColor(this.pt)));
     }
