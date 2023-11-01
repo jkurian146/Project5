@@ -314,6 +314,16 @@ public class MockReversiHexModel implements ReversiModel {
     this.playerAction.append("pass ");
   }
 
+  @Override
+  public int getDimensions() {
+    return 0;
+  }
+
+  @Override
+  public Disc[][] getBoard() {
+    return new Disc[0][];
+  }
+
   private void togglePlayer() {
     if (this.pt == PlayerTurn.PLAYER1) {
       this.pt = PlayerTurn.PLAYER2;

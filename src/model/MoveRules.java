@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+
 public  class MoveRules {
   public static List<Integer> applyShiftBasedOnDirection(int x, int y, MoveDirection moveDirection) {
     ArrayList<Integer> res = new ArrayList<>();

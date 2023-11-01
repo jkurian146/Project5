@@ -10,17 +10,21 @@ import model.MockReversiHexModel;
 import model.ReversiHexModel;
 import model.ReversiModel;
 import player.PlayerTurn;
+import view.ReversiTextualView;
+import view.TextualView;
 
 public class ReversiHexModelTests {
   ReversiModel model;
   PlayerTurn player1;
   PlayerTurn player2;
-
+  ReversiTextualView textualView;
   @Before
   public void initData() {
     this.model = new ReversiHexModel();
     this.player1 = PlayerTurn.PLAYER1;
     this.player2 = PlayerTurn.PLAYER2;
+    this.textualView = new TextualView(model, new StringBuilder());
+
   }
 
 
@@ -164,64 +168,28 @@ public class ReversiHexModelTests {
     Assert.assertThrows(IllegalArgumentException.class, () -> model.makeMove(6,6));
     Assert.assertThrows(IllegalArgumentException.class, () -> model.makeMove(1,6));
     Assert.assertThrows(IllegalArgumentException.class, () -> model.makeMove(-1,1));
-
-
-
   }
 
   @Test
   public void integrationMoves() {
     model.startGame(7);
-
-    //   0 1 2 3 4 5 6                 0 1 2 3 4 5 6
-    // 0 n n _ _ _ _ n               0    _ _ _ _
-    // 1 n _ _ _ _ _ n               1   _ _ _ _ _
-    // 2 n _ _ o x _ _               2  _ _ o x _ _
-    // 3 _ _ x _ o _ _               3 _ _ x _ o _ _
-    // 4 n _ _ o x _ _               4  _ _ o x _ _
-    // 5 n _ _ _ _ _ n               5   _ _ _ _ _
-    // 6 n n _ _ _ _ n               6    _ _ _ _
-
     Assert.assertEquals(PlayerTurn.PLAYER1, model.currentTurn());
-    model.makeMove(2,2);
 
-    //   0 1 2 3 4 5 6                 0 1 2 3 4 5 6
-    // 0 n n _ _ _ _ n               0    _ _ _ _
-    // 1 n _ _ _ _ _ n               1   _ _ _ _ _
-    // 2 n _ o o x _ _               2  _ o o x _ _
-    // 3 _ _ o _ o _ _               3 _ _ o _ o _ _
-    // 4 n _ _ o x _ _               4  _ _ o x _ _
-    // 5 n _ _ _ _ _ n               5   _ _ _ _ _
-    // 6 n n _ _ _ _ n               6    _ _ _ _
+    model.makeMove(2,2);
+    textualView.render();
 
     Assert.assertEquals(DiscColor.BLACK, model.getDiscAt(2,2).getColor());
     Assert.assertEquals(DiscColor.BLACK, model.getDiscAt(2, 3).getColor());
 
     model.makeMove(5,2);
-
-    //   0 1 2 3 4 5 6                 0 1 2 3 4 5 6
-    // 0 n n _ _ _ _ n               0    _ _ _ _
-    // 1 n _ _ _ _ _ n               1   _ _ _ _ _
-    // 2 n _ o o x x _               2  _ o o x x _
-    // 3 _ _ o _ x _ _               3 _ _ o _ x _ _
-    // 4 n _ _ o x _ _               4  _ _ o x _ _
-    // 5 n _ _ _ _ _ n               5   _ _ _ _ _
-    // 6 n n _ _ _ _ n               6    _ _ _ _
+    textualView.render();
 
     Assert.assertEquals(DiscColor.WHITE, model.getDiscAt(5,2).getColor());
     Assert.assertEquals(DiscColor.WHITE, model.getDiscAt(4,3).getColor());
 
 
     model.makeMove(6,2);
-
-    //   0 1 2 3 4 5 6                 0 1 2 3 4 5 6
-    // 0 n n _ _ _ _ n               0    _ _ _ _
-    // 1 n _ _ _ _ _ n               1   _ _ _ _ _
-    // 2 n _ o o o o o               2  _ o o o o o
-    // 3 _ _ o _ x _ _               3 _ _ o _ x _ _
-    // 4 n _ _ o x _ _               4  _ _ o x _ _
-    // 5 n _ _ _ _ _ n               5   _ _ _ _ _
-    // 6 n n _ _ _ _ n               6    _ _ _ _
+    textualView.render();
 
     Assert.assertEquals(DiscColor.BLACK, model.getDiscAt(6,2).getColor());
     Assert.assertEquals(DiscColor.BLACK, model.getDiscAt(5,2).getColor());
@@ -229,15 +197,7 @@ public class ReversiHexModelTests {
     model.pass();
     Assert.assertEquals(PlayerTurn.PLAYER1, model.currentTurn());
     model.makeMove(5, 4);
-
-    //   0 1 2 3 4 5 6                 0 1 2 3 4 5 6
-    // 0 n n _ _ _ _ n               0    _ _ _ _
-    // 1 n _ _ _ _ _ n               1   _ _ _ _ _
-    // 2 n _ o o o o o               2  _ o o o o o
-    // 3 _ _ o _ o _ _               3 _ _ o _ o _ _
-    // 4 n _ _ o o o _               4  _ _ o o o _
-    // 5 n _ _ _ _ _ n               5   _ _ _ _ _
-    // 6 n n _ _ _ _ n               6    _ _ _ _
+    textualView.render();
 
     Assert.assertEquals(DiscColor.BLACK, model.getDiscAt(5,4).getColor());
     Assert.assertEquals(DiscColor.BLACK, model.getDiscAt(4,3).getColor());
@@ -302,4 +262,20 @@ public class ReversiHexModelTests {
     Assert.assertTrue(mockModel.isGameOver());
   }
 
+  @Test
+  public void testViewForSizes() {
+    model.startGame(11);
+    Assert.assertEquals("     - - - - - -     \n" +
+            "    - - - - - - -    \n" +
+            "   - - - - - - - -   \n" +
+            "  - - - - - - - - -  \n" +
+            " - - - - X O - - - - \n" +
+            "- - - - O - X - - - -\n" +
+            " - - - - X O - - - - \n" +
+            "  - - - - - - - - -  \n" +
+            "   - - - - - - - -   \n" +
+            "    - - - - - - -    \n" +
+            "     - - - - - -     \n", textualView.toString());
+
+  }
 }

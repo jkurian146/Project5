@@ -39,7 +39,6 @@ public class ReversiHexModel implements ReversiModel {
     this.pt = PlayerTurn.PLAYER1;
     this.playerAction = new StringBuilder();
     this.state = GameState.ONGOING;
-
     this.playerColorMap = new HashMap<>();
     playerColorMap.put(PlayerTurn.PLAYER1, DiscColor.BLACK);
     playerColorMap.put(PlayerTurn.PLAYER2, DiscColor.WHITE);
@@ -50,17 +49,12 @@ public class ReversiHexModel implements ReversiModel {
    *
    * @param spacesMaxLeft The maximum null spaces for this row to the left of the discs
    * @param spacesMaxRight The maximum null spaces for this row to the right of the discs
-   * @param sb1
    * @param i
    */
-  private void placeGameDiscs(int spacesMaxLeft, int spacesMaxRight, StringBuilder sb1, int i) {
-    sb1.append("\n");
+  private void placeGameDiscs(int spacesMaxLeft, int spacesMaxRight, int i) {
     for (int j = 0; j < this.gameBoard[0].length; j++) {
       if (j >= spacesMaxLeft && j < this.gameBoard.length - spacesMaxRight) {
-        sb1.append("-");
         this.gameBoard[i][j] = new GameDisc(this.type, DiscColor.FACEDOWN);
-      } else {
-        sb1.append("n");
       }
     }
   }
@@ -75,8 +69,6 @@ public class ReversiHexModel implements ReversiModel {
     int SpacesMaxLeft = (int) Math.ceil(MaxSpaces / 2);
     int SpacesMaxRight = (int) (MaxSpaces - SpacesMaxLeft);
     boolean middleCrossed = false;
-    StringBuilder sb1 = new StringBuilder();
-
     for (int i = 0; i < this.gameBoard.length; i++) {
       int distanceFromMiddle = Math.abs(middle - i);
 
@@ -90,7 +82,7 @@ public class ReversiHexModel implements ReversiModel {
         }
       }
 
-      this.placeGameDiscs(SpacesMaxLeft, SpacesMaxRight, sb1, i);
+      this.placeGameDiscs(SpacesMaxLeft, SpacesMaxRight, i);
 
       if (!middleCrossed) {
         if (distanceFromMiddle % 2 == 0) {
@@ -109,7 +101,6 @@ public class ReversiHexModel implements ReversiModel {
         middleCrossed = true;
       }
     }
-    System.out.println(sb1.toString());
   }
 
   /**
@@ -133,7 +124,7 @@ public class ReversiHexModel implements ReversiModel {
         }
       }
 
-      this.placeGameDiscs(SpacesMaxLeft, SpacesMaxRight, sb1, i);
+      this.placeGameDiscs(SpacesMaxLeft, SpacesMaxRight, i);
 
       if (!middleCrossed) {
         if (distanceFromMiddle % 2 != 0) {
@@ -186,6 +177,7 @@ public class ReversiHexModel implements ReversiModel {
     this.setPiece(middle - 1, middle, DiscColor.WHITE); // 2,3
   }
 
+  @Override
   public Disc[][] getBoard() {
     return this.gameBoard;
   }
@@ -215,6 +207,10 @@ public class ReversiHexModel implements ReversiModel {
     initBoard();
   }
 
+  @Override
+  public int getDimensions() {
+    return this.numRows;
+  }
   /**
    * Helper method for all in-game methods that throws an IllegalStateException
    * if the game has not yet been started.
@@ -428,7 +424,7 @@ public class ReversiHexModel implements ReversiModel {
   public Disc getDiscAt(int x, int y) {
     this.gameNotYetStarted();
     if (!this.checkValidCoordinates(x, y)) {
-      throw new IllegalArgumentException("POSN provided by user is invalid");
+      throw new IllegalArgumentException("getDiscAt: POSN provided by user is invalid");
     }
     return this.gameBoard[y][x];
   }
@@ -437,7 +433,7 @@ public class ReversiHexModel implements ReversiModel {
   public boolean isDiscFlipped(int x, int y) {
     this.gameNotYetStarted();
     if (!this.checkValidCoordinates(x, y)) {
-      throw new IllegalArgumentException("POSN provided by user is invalid");
+      throw new IllegalArgumentException("isDiscFlipped: POSN provided by user is invalid");
     }
     return this.gameBoard[y][x].getColor() != DiscColor.FACEDOWN;
   }

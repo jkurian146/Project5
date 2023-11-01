@@ -103,4 +103,10 @@ public interface ReversiModel {
    */
   void pass();
 
+  /**
+   * Returns a board dimensions
+   */
+  int getDimensions();
+
+  Disc[][] getBoard();
 }
