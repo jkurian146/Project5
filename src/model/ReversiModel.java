@@ -76,15 +76,6 @@ public interface ReversiModel {
   PlayerTurn currentTurn();
 
   /**
-   * Returns the score of the given player.
-   *
-   * @param player the player to evaluate
-   * @return the number of discs that the given player occupies
-   * @throws IllegalStateException if the game hasn't been started yet
-   */
-  int getPlayerScore(PlayerTurn player);
-
-  /**
    * Returns the disc at the specified coordinates.
    *
    * @param x the coordinate of the desired disc on the game board

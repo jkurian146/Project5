@@ -23,6 +23,8 @@ public class ReversiHexModel implements ReversiModel {
   private final Map<PlayerTurn, DiscColor> playerColorMap;
   private int numRows;
   private int numColumns;
+  private StringBuilder playerAction;
+  private GameState state;
 
   /**
    * Constructor for a Reversi hexagonal model.
@@ -35,6 +37,8 @@ public class ReversiHexModel implements ReversiModel {
     this.type = DiscType.HEXDISC;
     this.gameBoard = null;
     this.pt = PlayerTurn.PLAYER1;
+    this.playerAction = new StringBuilder();
+    this.state = GameState.ONGOING;
 
     this.playerColorMap = new HashMap<>();
     playerColorMap.put(PlayerTurn.PLAYER1, DiscColor.BLACK);
@@ -301,6 +305,8 @@ public class ReversiHexModel implements ReversiModel {
       l.forEach(innerList -> applyColorFilter(innerList, this.getPlayerColor(this.pt)));
     }
     this.togglePlayer();
+    this.playerAction.append(this.getPlayerColor(this.pt).toString())
+            .append(" moved to (").append(x).append(y).append("), ");
   }
 
 
@@ -310,9 +316,58 @@ public class ReversiHexModel implements ReversiModel {
     this.setPiece(list.get(0),list.get(1), discColor);
   }
 
+  private boolean consecutivePasses() {
+    List<String> moveHistory = Arrays.asList(this.playerAction.toString().split(" "));
+
+    if(moveHistory.size() >= 2) {
+      String last = moveHistory.get(moveHistory.size() -1);
+      String penultimate = moveHistory.get(moveHistory.size() -2);
+
+      return last.equals("pass") && penultimate.equals("pass");
+    } else {
+      return false;
+    }
+  }
+
+  private GameState
+
   @Override
   public Boolean isGameOver() {
-    return false;
+    boolean noMoves = this.noMoreLegalMoves();
+    boolean twoPassesInARow = this.consecutivePasses();
+    boolean currentPlayerScore = this.getPlayerScore(this.pt) == 0;
+    boolean opponentPlayerScore = this.getPlayerScore(this.getOpponent(this.pt)) == 0;
+
+    if(twoPassesInARow) {
+      this.state = GameState.STALEMATE;
+      return true;
+    }
+
+    if(currentPlayerScore) {
+      if (this.pt == PlayerTurn.PLAYER1) {
+        this.state = GameState.PLAYER1WIN;
+      }
+    }
+
+  }
+
+  private Boolean noMoreLegalMoves() {
+    for(int i = 0; i < this.gameBoard.length; i ++) {
+      for(int j = 0; j < this.gameBoard[0].length; j ++) {
+        if(this.gameBoard[j][i].getColor() == null) {
+          int doNothing = 0;
+        }
+        else if(this.gameBoard[j][i].getColor() == DiscColor.FACEDOWN) {
+          List<List<List<Integer>>> moves = bfs(i,j);
+
+          boolean allEmptyLists = moves.stream().allMatch(List::isEmpty);
+          if(!allEmptyLists) {
+            return false;
+          }
+        }
+      }
+    }
+    return true;
   }
 
   @Override
@@ -332,15 +387,23 @@ public class ReversiHexModel implements ReversiModel {
     return playerColorMap.get(player);
   }
 
-  @Override
-  public int getPlayerScore(PlayerTurn player) {
+  private PlayerTurn getOpponent(PlayerTurn player) {
+    if(PlayerTurn.PLAYER2 == player) {
+      return PlayerTurn.PLAYER1;
+    }
+      return PlayerTurn.PLAYER2;
+  }
+
+  private int getPlayerScore(PlayerTurn player) {
     this.gameNotYetStarted();
 
     int countDiscsForThisPlayer = 0;
 
     for (Disc[] row : this.gameBoard) {
       for (Disc disc : row) {
-        if (disc.getColor() == this.getPlayerColor(player)) {
+        if(disc == null) {
+          countDiscsForThisPlayer += 0;
+        } else if (disc.getColor() == this.getPlayerColor(player)) {
           countDiscsForThisPlayer++;
         }
       }
@@ -370,6 +433,8 @@ public class ReversiHexModel implements ReversiModel {
   public void pass() {
     this.gameNotYetStarted();
     this.togglePlayer();
+
+    this.playerAction.append("pass ");
   }
 
   private void togglePlayer() {
