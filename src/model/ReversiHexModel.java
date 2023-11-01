@@ -329,32 +329,33 @@ public class ReversiHexModel implements ReversiModel {
     }
   }
 
-  private GameState
 
   @Override
   public Boolean isGameOver() {
     boolean noMoves = this.noMoreLegalMoves();
     boolean twoPassesInARow = this.consecutivePasses();
-    boolean currentPlayerScore = this.getPlayerScore(this.pt) == 0;
-    boolean opponentPlayerScore = this.getPlayerScore(this.getOpponent(this.pt)) == 0;
+    boolean currentPlayerLost = this.getPlayerScore(this.pt) == 0;
+    boolean oppositePlayerLost = this.getPlayerScore(this.getOpponent(this.pt)) == 0;
 
-    if(twoPassesInARow) {
+    if(twoPassesInARow || noMoves) {
       this.state = GameState.STALEMATE;
       return true;
     }
-
-    if(currentPlayerScore) {
-      if (this.pt == PlayerTurn.PLAYER1) {
-        this.state = GameState.PLAYER1WIN;
-      }
+    if (currentPlayerLost) {
+      this.state = (this.pt == PlayerTurn.PLAYER1) ? GameState.PLAYER2WIN: GameState.PLAYER1WIN;
+      return true;
     }
-
+    if (oppositePlayerLost) {
+      this.state = (this.pt == PlayerTurn.PLAYER1) ? GameState.PLAYER1WIN : GameState.PLAYER2WIN;
+      return true;
+    }
+    return false;
   }
 
   private Boolean noMoreLegalMoves() {
     for(int i = 0; i < this.gameBoard.length; i ++) {
       for(int j = 0; j < this.gameBoard[0].length; j ++) {
-        if(this.gameBoard[j][i].getColor() == null) {
+        if(this.gameBoard[j][i] == null) {
           int doNothing = 0;
         }
         else if(this.gameBoard[j][i].getColor() == DiscColor.FACEDOWN) {

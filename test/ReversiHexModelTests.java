@@ -201,35 +201,6 @@ public class ReversiHexModelTests {
     Assert.assertEquals(DiscColor.WHITE, model.getDiscAt(5,4).getColor());
     Assert.assertEquals(DiscColor.WHITE, model.getDiscAt(4,3).getColor());
     Assert.assertEquals(DiscColor.WHITE, model.getDiscAt(4,4).getColor());
-
-//    Assert.assertTrue(model.isGameOver());
+    Assert.assertTrue(model.isGameOver());
   }
-
-
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
